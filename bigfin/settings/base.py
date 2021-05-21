@@ -2,13 +2,7 @@ from pathlib import Path
 import os
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = '+4@22_0@5f@@)sj$v@gj@q$jghm!q!c$m%v*bgu)1fcy*=t4a*'
-
-DEBUG = True
-
-ALLOWED_HOSTS = []
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -17,7 +11,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',
+
+    'blog',
+    'toturial',
+    'trade',
+    'user',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -51,7 +49,8 @@ ROOT_URLCONF = 'bigfin.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+                 os.path.join(BASE_DIR, 'bigfin', 'settings', 'templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -104,7 +103,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),
-                    os.path.join(BASE_DIR, 'bigfin', 'static'),]
+                    os.path.join(BASE_DIR, 'bigfin', 'static'),
+                    ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
