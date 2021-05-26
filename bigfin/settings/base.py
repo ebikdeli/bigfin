@@ -15,7 +15,8 @@ INSTALLED_APPS = [
     'blog',
     'toturial',
     'trade',
-    'user',
+    'profile',
+    'social_login',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     'modelcluster',
     'taggit',
     'django_countries',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -50,8 +52,8 @@ ROOT_URLCONF = 'bigfin.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                 os.path.join(BASE_DIR, 'bigfin', 'settings', 'templates')]
+        'DIRS': [os.path.join(BASE_DIR),
+                ]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -60,6 +62,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -89,7 +93,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Authentication settings
+
 AUTH_USER_MODEL = 'auth.User'
+
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.linkedin.LinkedinOAuth2',
+    'social_core.backends.instagram.InstagramOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '501246578971-mjnug89a0d06euip8so4th7c5dikac2d.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'yChaL7cwc_nAUdYYJP42GwB5'
 
 LANGUAGE_CODE = 'en-us'
 
@@ -105,12 +124,16 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),
-                    os.path.join(BASE_DIR, 'bigfin', 'static'),
+STATICFILES_DIRS = [os.path.join(BASE_DIR),
                     ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/'
+LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/'
 
 WAGTAIL_SITE_NAME = 'Welcome to BigFin website'

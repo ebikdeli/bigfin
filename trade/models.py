@@ -25,15 +25,15 @@ class FiatCurrency(models.Model):
 
 class DigitalCurrency(models.Model):
     TOKEN_OR_COIN = (
-        ('token', 'token'),
-        ('coin', 'coin')
+        ('Token', 'token'),
+        ('Coin', 'coin')
     )
     name = models.CharField(max_length=30)
     founded = models.CharField(max_length=4, blank=True)
     value = models.PositiveIntegerField(verbose_name='Value compared to USD:')
     description = models.TextField(blank=True)
     slug = models.SlugField()
-    token_or_coin = models.CharField(choices=TOKEN_OR_COIN)
+    token_or_coin = models.CharField(max_length=5, choices=TOKEN_OR_COIN)
     created = models.DateTimeField(auto_now_add=True)
     Updated = models.DateTimeField(auto_now=True)
 
