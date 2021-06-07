@@ -2,11 +2,12 @@ from django.shortcuts import render
 import websocket
 import json
 import requests
+from django.contrib.auth.models import User
 
 
 API_KEY = '8AC81A58-86B8-46E6-A1C3-D1A8D6E36A35'
 
-BASE_URL = 'https://rest.coinapi.io/'
+BASE_URL = 'https://rest-sandbox.coinapi.io/'
 ASSETS = ['BTC', 'ETH', ]
 HEADER = {'X-CoinAPI-Key': API_KEY, 'Accept': 'application/json',
           'Accept-Encoding': 'deflate, gzip'}
@@ -26,7 +27,7 @@ def index(request):
         print(type(data))
         print(data)
     except:
-        data = {'price_high': '0000', 'price_low': '0000', 'price_now': 'اشکال در برقراری ارتباط با سرویس خارجی'}
+        data = {'price_high': '0000', 'price_low': '0000', 'price_close': 'اشکال در برقراری ارتباط با سرویس خارجی'}
 
     return render(request, 'vitrin/templates/index.html', context={
                   'high': data['price_high'],

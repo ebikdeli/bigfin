@@ -1,0 +1,8 @@
+{% load static %}
+
+{% block title %}{{ request.user.username }} dashboard{% endblock %}
+
+{% block content %}
+<h1>It it {{ object.user.username }} dashboard</h1>
+    <p>{{ object.phone }}</p>
+{% endblock %}

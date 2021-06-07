@@ -1,3 +1,9 @@
+$(document).ready(function () {
+  setInterval(function () {
+    $(".OnlinePrice").load(window.location.href + " .OnlinePrice");
+  }, 4000);
+});
+
 var timer = 4000;
 
 var i = 0;

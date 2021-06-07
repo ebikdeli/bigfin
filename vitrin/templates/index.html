@@ -84,6 +84,14 @@
         </div>
         <div class="col-xl-9 col" id="TEXT">
           <p>hello c'est moi</p>
+
+            {% if not request.user.username %}
+                <p><a href="{% url 'profile:create_user' %}">ثبت نام</a></p>
+                <p><a href="{% url 'profile:profile_login' %}">ورود</a></p>
+            {% else %}
+                <p><a href="{% url 'logout' %}">خروج از حساب کاربری</a></p>
+            {% endif %}
+
         </div>
       </div>
     </div>

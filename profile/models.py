@@ -11,9 +11,10 @@ class Profile(models.Model):
                                 related_name='profile')
     phone = models.CharField(max_length=12)
     address = models.TextField(blank=True)
-    credit = models.PositiveIntegerField(default=0)
-    score = models.PositiveIntegerField(default=0)
-    slug = models.SlugField()
+    picture = models.ImageField(blank=True)
+    credit = models.PositiveIntegerField(default=0, blank=True)
+    score = models.PositiveIntegerField(default=0, blank=True)
+    slug = models.SlugField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     # trades => list of all trades profile done
@@ -32,4 +33,4 @@ class Profile(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_urls(self):
-        return reverse('', kwargs={'id': self.id, 'slug': self.slug})
+        return reverse('dashboard:main', kwargs={'slug': self.slug})

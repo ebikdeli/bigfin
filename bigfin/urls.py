@@ -13,8 +13,10 @@ urlpatterns = [
     path('cms/', include(wagtailadmin_urls)),
     path('documents/', include(wagtaildocs_urls)),
     path('pages/', include(wagtail_urls)),
-    path('sociallog/', include('social_login.urls')),
+    path('social-login/', include('social_login.urls')),
     path('wagtail/', include(wagtail_urls)),
+    path('profile/', include('profile.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('', include('vitrin.urls')),
 ]
 

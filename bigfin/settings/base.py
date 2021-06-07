@@ -18,6 +18,8 @@ INSTALLED_APPS = [
     'trade',
     'profile',
     'social_login',
+    'dashboard',
+    'wallet',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -30,6 +32,7 @@ INSTALLED_APPS = [
     'wagtail.search',
     'wagtail.admin',
     'wagtail.core',
+    'wagtail.contrib.modeladmin',
 
     'modelcluster',
     'taggit',
@@ -54,7 +57,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR),
-                ]
+                 os.path.join(BASE_DIR, 'dashboard', 'templates'),
+                 os.path.join(BASE_DIR, 'profile', 'templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -121,18 +125,21 @@ USE_L10N = True
 
 USE_TZ = True
 
+USE_THOUSAND_SEPARATOR = True
+
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR),
+                    os.path.join(BASE_DIR, 'dashboard', 'static'),
                     ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
-LOGIN_URL = 'login'
+LOGIN_URL = 'home'
 LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/'
 LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/'

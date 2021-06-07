@@ -36,6 +36,7 @@ tablib==3.0.0
 urllib3==1.26.4
 wagtail==2.12.4
 webencodings==0.5.1
+websocket-client==1.0.1
 Willow==1.4
 xlrd==2.0.1
 XlsxWriter==1.4.0
