@@ -20,24 +20,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4d2de517-bd0d-48c9-9ae5-b4d9e43d6b25" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/dashboard/templates/dashboard_base.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dashboard/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/templates/profile_create.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/templates/profile_edit.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/templates/profile_login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/wagtail_hooks.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bigfin/celery.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitrin/tasks.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bigfin/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/bigfin/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bigfin/settings/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/bigfin/settings/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bigfin/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bigfin/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dashboard/templates/dashboard_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard/templates/dashboard_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dashboard/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/profile/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/profile/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/social_login/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/social_login/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vitrin/static/js/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/vitrin/static/js/script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vitrin/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/vitrin/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vitrin/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/vitrin/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,8 +46,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -79,6 +70,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\CODES\PYTHON\Django\bigfin\bigfin\bigfin" />
+      <recent name="C:\CODES\PYTHON\Django\bigfin\bigfin\bigfin\settings" />
       <recent name="C:\CODES\PYTHON\Django\bigfin\bigfin\vitrin\static" />
       <recent name="C:\CODES\Python\Django\BigFin\bigfin\bigfin\settings" />
     </key>
@@ -146,7 +139,13 @@
       <workItem from="1622960500632" duration="13556000" />
       <workItem from="1623007399066" duration="2550000" />
       <workItem from="1623039510993" duration="9738000" />
-      <workItem from="1623064698556" duration="10244000" />
+      <workItem from="1623064698556" duration="11233000" />
+      <workItem from="1623082152416" duration="240000" />
+      <workItem from="1623085087983" duration="3892000" />
+      <workItem from="1623089116364" duration="5310000" />
+      <workItem from="1623137717963" duration="1309000" />
+      <workItem from="1623396719278" duration="822000" />
+      <workItem from="1623660234496" duration="23000" />
     </task>
     <task id="LOCAL-00001" summary="Before social auth">
       <created>1621749797960</created>
@@ -162,7 +161,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622291987248</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="profile and social login completed">
+      <created>1623081088664</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1623081088664</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -191,7 +197,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Before social auth" />
     <MESSAGE value="3rd party api (basic) added" />
-    <option name="LAST_COMMIT_MESSAGE" value="3rd party api (basic) added" />
+    <MESSAGE value="profile and social login completed" />
+    <option name="LAST_COMMIT_MESSAGE" value="profile and social login completed" />
   </component>
   <component name="WindowStateProjectService">
     <state x="219" y="58" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1622989057890">
@@ -202,22 +209,22 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="496" y="108" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1622186413181" />
-    <state width="1481" height="197" key="GridCell.Tab.0.bottom" timestamp="1623080256463">
+    <state width="1481" height="171" key="GridCell.Tab.0.bottom" timestamp="1623095010937">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1481" height="197" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1623080256463" />
-    <state width="1481" height="197" key="GridCell.Tab.0.center" timestamp="1623080256463">
+    <state width="1481" height="171" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1623095010937" />
+    <state width="1481" height="171" key="GridCell.Tab.0.center" timestamp="1623095010937">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1481" height="197" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1623080256463" />
-    <state width="1481" height="197" key="GridCell.Tab.0.left" timestamp="1623080256463">
+    <state width="1481" height="171" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1623095010937" />
+    <state width="1481" height="171" key="GridCell.Tab.0.left" timestamp="1623095010937">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1481" height="197" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1623080256463" />
-    <state width="1481" height="197" key="GridCell.Tab.0.right" timestamp="1623080256463">
+    <state width="1481" height="171" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1623095010937" />
+    <state width="1481" height="171" key="GridCell.Tab.0.right" timestamp="1623095010937">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1481" height="197" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1623080256463" />
+    <state width="1481" height="171" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1623095010937" />
     <state width="238" height="549" key="HiddenNamespacesPopup" timestamp="1622290688106">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

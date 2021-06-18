@@ -8,3 +8,4 @@ from django.views.generic import DetailView
 class MainDashboardView(DetailView):
     model = Profile
     template_name = 'dashboard_base.html'
+    context_object_name = 'profile'

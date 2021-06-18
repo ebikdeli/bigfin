@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from django.urls import reverse_lazy
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -140,8 +141,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 LOGIN_URL = 'home'
-LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/'
+LOGIN_REDIRECT_URL = reverse_lazy('vitrin:index')
 LOGOUT_URL = 'logout'
-LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/'
+LOGOUT_REDIRECT_URL = reverse_lazy('vitrin:index')
 
 WAGTAIL_SITE_NAME = 'Welcome to BigFin website'
