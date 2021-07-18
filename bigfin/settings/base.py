@@ -1,9 +1,12 @@
-from pathlib import Path
+# from pathlib import Path  # wagtail using this module but PyCharm could not reference BASE_DIR using this module!
 import os
 from django.urls import reverse_lazy
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# BASE_DIR = os.path.dirname(__file__).resolve().parent.parent.parent
+
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -12,15 +15,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'vitrin',
-    'blog',
-    'toturial',
-    'trade',
-    'profile',
-    'social_login',
-    'dashboard',
-    'wallet',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -34,6 +28,15 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
     'wagtail.contrib.modeladmin',
+
+    'vitrin',
+    'blog',
+    'toturial',
+    'trade',
+    'profile',
+    'social_login',
+    'dashboard',
+    'wallet',
 
     'modelcluster',
     'taggit',
@@ -58,8 +61,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR),
-                 os.path.join(BASE_DIR, 'dashboard', 'templates'),
-                 os.path.join(BASE_DIR, 'profile', 'templates')
                  ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -133,7 +134,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR),
-                    os.path.join(BASE_DIR, 'dashboard', 'static'),
                     ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
