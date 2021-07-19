@@ -63,11 +63,11 @@ def user_login(request):
             user = authenticate(request, username=user_auth['username_or_email_login'], password=user_auth['password'])
             if user is not None:
                 login(request, user)
-                return redirect('shop:index')
+                return redirect('vitrin:index')
             try:
                 user = User.objects.get(email=user_auth['username_or_email_login'])
                 login(request, user)
-                return redirect('shop:index')
+                return redirect('vitrin:index')
             except User.DoesNotExist:
                 print('user not exist!')
                 messages.add_message(request, messages.ERROR, 'اطلاعات وارد شده اشتباه است!')
@@ -113,7 +113,7 @@ def profile_edit(request, username):
             current_profile.save()
             current_user.save()
             # Cart.objects.create(profile=current_profile)
-            return redirect('shop:index')
+            return redirect('vitrin:index')
 
     else:
         try:
@@ -134,4 +134,4 @@ def profile_edit(request, username):
 @login_required
 def user_logout(request, username=None):
     logout(request)
-    return redirect('shop:index')
+    return redirect('vitrin:index')
