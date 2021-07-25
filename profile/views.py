@@ -84,8 +84,12 @@ def user_login(request):
             user_auth = user_auth_form.cleaned_data
             print(user_auth)
 # user = authenticate(request, username=user_auth['username_or_email_login'], password=user_auth['password'])
-            user = User.objects.get(username=user_auth['username_or_email_login'], password=user_auth['password'])
-            print(user)
+            try:
+                user = User.objects.get(username=user_auth['username_or_email_login'], password=user_auth['password'])
+                print(user)
+            except User.DoesNotExist:
+                messages.add_message(request, messages.INFO, 'نام کاربری یا رمز عبور اشتباه است')
+                return redirect('profile:login_signup')
 
             if user is not None:
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')

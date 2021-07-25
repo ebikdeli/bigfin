@@ -29,7 +29,7 @@
           <a href=""><span class="uk-margin-big-right" uk-icon="info"></span></a>
         </button>
       </nav> -->
-      <img src="{% static 'image/header.jpg' %}" alt="image not found" />
+      <img src="{% static 'vitrin/static/images/header.jpg' %}" alt="image not found" />
     </header>
     <div class="container-fluid">
       <div class="row">
@@ -147,7 +147,7 @@
           <p>hello c'est moi</p>
 
             {% if not request.user.username %}
-                <p><a href="{% url 'profile:user_signup' %}">ثبت نام/ورود</a></p>
+                <p><a href="{% url 'profile:login_signup' %}">ثبت نام/ورود</a></p>
             {% else %}
                 <p><a href="{% url 'logout' %}">خروج از حساب کاربری</a></p>
             {% endif %}
