@@ -1,6 +1,5 @@
-
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -30,7 +29,7 @@
           <a href=""><span class="uk-margin-big-right" uk-icon="info"></span></a>
         </button>
       </nav> -->
-      <img src="{% static 'vitrin/static/images/header.jpg' %}" alt="image not found" />
+      <img src="{% static 'image/header.jpg' %}" alt="image not found" />
     </header>
     <div class="container-fluid">
       <div class="row">
@@ -46,7 +45,7 @@
                       <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" /></svg
                     ><a class="DownPrice" href="">
 
-                      {{ low }}
+                      {{ low_btc }}
 
                       <!-- falling prices -->
                     </a>
@@ -54,14 +53,76 @@
                       <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" /></svg
                     ><a class="UpPrice" href="">
 
-                      {{ high }}
+                      {{ high_btc }}
 
                       <!-- rising prices -->
                     </a>
                   </p>
                   <a class="OnlinePrice" href="">
 
-                      {{ price_now }}
+                      {{ price_now_btc }}
+
+                    <!-- live prices -->
+                  </a>
+                </strong>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong
+                  >ethereum
+                  <p>
+                    <svg id="down" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill text-danger" viewBox="0 0 16 16">
+                      <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" /></svg
+                    ><a class="DownPrice" href="">
+
+                      {{ low_eth }}
+
+                      <!-- falling prices -->
+                    </a>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill text-success" viewBox="0 0 16 16">
+                      <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" /></svg
+                    ><a class="UpPrice" href="">
+
+                      {{ high_eth }}
+
+                      <!-- rising prices -->
+                    </a>
+                  </p>
+                  <a class="OnlinePrice" href="">
+
+                      {{ price_now_eth }}
+
+                    <!-- live prices -->
+                  </a>
+                </strong>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong
+                  >dogecoin
+                  <p>
+                    <svg id="down" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill text-danger" viewBox="0 0 16 16">
+                      <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" /></svg
+                    ><a class="DownPrice" href="">
+
+                      {{ low_doge }}
+
+                      <!-- falling prices -->
+                    </a>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill text-success" viewBox="0 0 16 16">
+                      <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" /></svg
+                    ><a class="UpPrice" href="">
+
+                      {{ high_doge }}
+
+                      <!-- rising prices -->
+                    </a>
+                  </p>
+                  <a class="OnlinePrice" href="">
+
+                      {{ price_now_doge }}
 
                     <!-- live prices -->
                   </a>
@@ -86,8 +147,7 @@
           <p>hello c'est moi</p>
 
             {% if not request.user.username %}
-                <p><a href="{% url 'profile:create_user' %}">ثبت نام</a></p>
-                <p><a href="{% url 'profile:profile_login' %}">ورود</a></p>
+                <p><a href="{% url 'profile:user_signup' %}">ثبت نام/ورود</a></p>
             {% else %}
                 <p><a href="{% url 'logout' %}">خروج از حساب کاربری</a></p>
             {% endif %}

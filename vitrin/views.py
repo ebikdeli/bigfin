@@ -1,6 +1,6 @@
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.profile.models import Profile
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User, AnonymousUser
+from profile.models import Profile
 import websocket
 import json
 import requests
@@ -17,31 +17,45 @@ WS_URL = 'ws://ws.coinapi.io/v1/'
 WS_PARAMS = {'type': 'hello', 'apikey': API_KEY, 'heatbeat': False,
              'subscribe_data_type': ['trade', ], 'subscribe_filter_asset_id': ['BTC', ]}
 
-REQUEST_URL = 'v1/ohlcv/BTC/USD/latest?period_id=1HRS&limit=10'
+REQUEST_URL_BITCOIN = 'v1/ohlcv/BTC/USD/latest?period_id=1HRS&limit=10'
+REQUEST_URL_ETHERIUM = 'v1/ohlcv/ETH/USD/latest?period_id=1HRS&limit=10'
+REQUEST_URL_DOGECOIN = 'v1/ohlcv/DOGE/USD/latest?period_id=1HRS&limit=10'
 
 
 def index(request):
     try:
-        request.user.profile
-        r = requests.get(url=BASE_URL + REQUEST_URL, headers=HEADER)
-        print(r.status_code)
-        data = r.json()[0]
-        print(type(data))
-        print(data)
+        # if isinstance(request.user, AnonymousUser):
+        #    return redirect('profile:create_user')
+        r_btc = requests.get(url=BASE_URL + REQUEST_URL_BITCOIN, headers=HEADER)
+        r_eth = requests.get(url=BASE_URL + REQUEST_URL_ETHERIUM, headers=HEADER)
+        r_doge = requests.get(url=BASE_URL + REQUEST_URL_DOGECOIN, headers=HEADER)
+        print(f'{r_btc.status_code} {r_eth.status_code} {r_doge.status_code}')
+        data_btc, data_eth, data_doge = r_btc.json()[0], r_eth.json()[0], r_doge.json()[0]
+        print(data_btc, '\n', data_eth, '\n', data_doge)
         
     except Profile.DoesNotExist:
         return redirect('profile:edit_profile', username=request.user.username)
 
     except ValueError:
-        data = {'price_high': '0000', 'price_low': '0000', 'price_close': 'اشکال در برقراری ارتباط با سرویس خارجی'}
+        data_btc = {'price_high': '0000', 'price_low': '0000', 'price_close': 'اشکال در برقراری ارتباط با سرویس خارجی'}
+        data_eth = {'price_high': '0000', 'price_low': '0000', 'price_close': 'اشکال در برقراری ارتباط با سرویس خارجی'}
+        data_doge = {'price_high': '0000', 'price_low': '0000', 'price_close': 'اشکال در برقراری ارتباط با سرویس خارجی'}
 
     except AttributeError:
-        pass
+        data_btc = {'price_high': '0000', 'price_low': '0000', 'price_close': 'اشکال در برقراری ارتباط با سرویس خارجی'}
+        data_eth = {'price_high': '0000', 'price_low': '0000', 'price_close': 'اشکال در برقراری ارتباط با سرویس خارجی'}
+        data_doge = {'price_high': '0000', 'price_low': '0000', 'price_close': 'اشکال در برقراری ارتباط با سرویس خارجی'}
         
     return render(request, 'vitrin/templates/index.html', context={
-                  'high': data['price_high'],
-                  'low': data['price_low'],
-                  'price_now': data['price_close']})
+                    'high_btc': data_btc['price_high'],
+                    'low_btc': data_btc['price_low'],
+                    'price_now_btc': data_btc['price_close'],
+                    'high_eth': data_eth['price_high'],
+                    'low_eth': data_eth['price_low'],
+                    'price_now_eth': data_eth['price_close'],
+                    'high_doge': data_doge['price_high'],
+                    'low_doge': data_doge['price_low'],
+                    'price_now_doge': data_doge['price_close']})
 
 
 def page1(request):

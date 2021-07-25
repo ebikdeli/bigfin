@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+# from cart.models import Cart
 from django.contrib.auth.views import auth_login
 from profile.models import Profile
 from profile.forms import ProfileEditForm, EmailUserForm,\
     ProfileCreateForm, UserCreateForm, UserAuthenticationLoginForm
 import re
 
-
+"""
 def profile_login(request):
     if request.method == 'POST':
         user_auth_form = UserAuthenticationLoginForm(request.POST)
@@ -17,31 +19,73 @@ def profile_login(request):
             user = authenticate(request, username=user_auth['username'], password=user_auth['password'])
             if user is not None:
                 login(request, user)
-                return redirect('vitrin:index')
+                return redirect('shop:index')
             messages.add_message(request, messages.ERROR, 'username or password is wrong!')
     else:
         user_auth_form = UserAuthenticationLoginForm()
 
     return render(request, 'profile_login.html', {'user_auth_form': user_auth_form})
+"""
 
 
-def profile_create(request):
+def user_login_signup(request):
     if request.method == 'POST':
-        user_create_form = UserCreateForm(data=request.POST)
-        profile_create_form = ProfileCreateForm(data=request.POST, files=request.FILES)
-        if user_create_form.is_valid() and profile_create_form.is_valid():
-            user_create_form.save()
-            profile_create_form.save()
-    else:
         user_create_form = UserCreateForm()
-        profile_create_form = ProfileCreateForm()
+        user_auth_form = UserAuthenticationLoginForm()
 
-    return render(request, 'profile/templates/profile_create.html', context={
+    else:
+        print('before form')
+        user_create_form = UserCreateForm()
+        user_auth_form = UserAuthenticationLoginForm()
+
+    return render(request, 'profile/templates/profile_login.html', context={
         'user_create_form': user_create_form,
-        'profile_create_form': profile_create_form
+        'user_auth_form': user_auth_form,
     })
 
 
+def user_signup(request):
+    if request.method == 'POST':
+        user_create_form = UserCreateForm(data=request.POST)
+        if user_create_form.is_valid():
+            pass
+    else:
+        return redirect('profile:login_signup')
+
+
+def user_login(request):
+    if request.method == 'POST':
+
+        user_auth_form = UserAuthenticationLoginForm(data=request.POST)
+        print(user_auth_form)
+        if user_auth_form.is_valid():
+            user_auth = user_auth_form.cleaned_data
+            user = authenticate(request, username=user_auth['username_or_email_login'], password=user_auth['password'])
+            if user is not None:
+                login(request, user)
+                return redirect('vitrin:index')
+            try:
+                user = User.objects.get(email=user_auth['username_or_email_login'])
+                login(request, user)
+                return redirect('vitrin:index')
+            except User.DoesNotExist:
+                print('user not exist!')
+                messages.add_message(request, messages.ERROR, 'اطلاعات وارد شده اشتباه است!')
+                return redirect('profile:login_signup')
+    else:
+        return redirect('profile:login_signup')
+
+
+def profile_login(request):
+    pass
+
+
+@login_required
+def profile_view(request, username=None):
+    return render(request, 'profile/templates/profile_view.html')
+
+
+@login_required
 def profile_edit(request, username):
     initial_profile_form_data = {
         'phone': Profile.phone,
@@ -68,6 +112,7 @@ def profile_edit(request, username):
                                                          picture=profile_edit_form.cleaned_data['picture'])
             current_profile.save()
             current_user.save()
+            # Cart.objects.create(profile=current_profile)
             return redirect('vitrin:index')
 
     else:
@@ -84,3 +129,9 @@ def profile_edit(request, username):
 
     return render(request, 'profile/templates/profile_edit.html', context={'profile_edit_form': profile_edit_form,
                                                                            'email_form': email_form})
+
+
+@login_required
+def user_logout(request, username=None):
+    logout(request)
+    return redirect('vitrin:index')
