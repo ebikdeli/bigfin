@@ -61,6 +61,7 @@ def user_signup(request):
                 return redirect('profile:login_signup')
 
             new_profile = Profile.objects.create(user=new_user)
+
             try:
                 Cart.objects.create(profile=new_profile)
             except IntegrityError:
