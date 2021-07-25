@@ -1,9 +1,12 @@
-from pathlib import Path
+# from pathlib import Path
 import os
 from django.urls import reverse_lazy
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,10 +60,7 @@ ROOT_URLCONF = 'bigfin.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR),
-                 os.path.join(BASE_DIR, 'dashboard', 'templates'),
-                 os.path.join(BASE_DIR, 'profile', 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR)],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,9 +132,7 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR),
-                    os.path.join(BASE_DIR, 'dashboard', 'static'),
-                    ]
+STATICFILES_DIRS = [os.path.join(BASE_DIR)]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
