@@ -3,12 +3,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-# from cart.models import Cart
-from django.contrib.auth.views import auth_login
+from django.db import IntegrityError
+# from django.contrib.auth.views import auth_login
+from cart.models import Cart
 from profile.models import Profile
-from profile.forms import ProfileEditForm, EmailUserForm,\
+from profile.forms import ProfileEditForm, UserEmailNameForm,\
     ProfileCreateForm, UserCreateForm, UserAuthenticationLoginForm
-import re
+# import re
 
 """
 def profile_login(request):
@@ -47,29 +48,54 @@ def user_login_signup(request):
 def user_signup(request):
     if request.method == 'POST':
         user_create_form = UserCreateForm(data=request.POST)
+
         if user_create_form.is_valid():
-            pass
-    else:
-        return redirect('profile:login_signup')
+            try:
+                new_user = User.objects.create(
+                    username=user_create_form.cleaned_data['username'],
+                    password=user_create_form.cleaned_data['password1'],
+                    email=user_create_form.cleaned_data['email']
+                )
+            except IntegrityError:
+                messages.add_message(request, messages.ERROR, 'نام کاربری مورد نظر شما قبلا ثبت شده')
+                return redirect('profile:login_signup')
+
+            new_profile = Profile.objects.create(user=new_user)
+            try:
+                Cart.objects.create(profile=new_profile)
+            except IntegrityError:
+                # Cart.objects.get(profile=new_profile)
+                pass
+
+            login(request, new_user,  backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('profile:profile_view', username=new_user.username)
+
+        else:
+            messages.add_message(request, messages.ERROR, 'اطلاعات را به درستی وارد کنید')
+            return redirect('profile:login_signup')
 
 
 def user_login(request):
     if request.method == 'POST':
-
         user_auth_form = UserAuthenticationLoginForm(data=request.POST)
-        print(user_auth_form)
+
         if user_auth_form.is_valid():
             user_auth = user_auth_form.cleaned_data
-            user = authenticate(request, username=user_auth['username_or_email_login'], password=user_auth['password'])
+            print(user_auth)
+# user = authenticate(request, username=user_auth['username_or_email_login'], password=user_auth['password'])
+            user = User.objects.get(username=user_auth['username_or_email_login'], password=user_auth['password'])
+            print(user)
+
             if user is not None:
-                login(request, user)
-                return redirect('vitrin:index')
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                return redirect('shop:index')
+
             try:
                 user = User.objects.get(email=user_auth['username_or_email_login'])
-                login(request, user)
-                return redirect('vitrin:index')
+                login(request, user,  backend='django.contrib.auth.backends.ModelBackend')
+                return redirect('shop:index')
+
             except User.DoesNotExist:
-                print('user not exist!')
                 messages.add_message(request, messages.ERROR, 'اطلاعات وارد شده اشتباه است!')
                 return redirect('profile:login_signup')
     else:
@@ -92,14 +118,17 @@ def profile_edit(request, username):
         'address': Profile.address,
         'picture': Profile.picture,
     }
-    email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+    # email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 
     if request.method == 'POST':
         profile_edit_form = ProfileEditForm(data=request.POST, files=request.FILES)
-        email_form = EmailUserForm(data=request.POST)
-        if profile_edit_form.is_valid() and email_form.is_valid():
+        user_email_name_form = UserEmailNameForm(data=request.POST)
+        print('error: ', user_email_name_form.errors, '  ', profile_edit_form.errors)
+        if profile_edit_form.is_valid() and user_email_name_form.is_valid():
             current_user = User.objects.get(username=username)
-            current_user.email = email_form.cleaned_data['email']
+            current_user.first_name = user_email_name_form.cleaned_data['first_name']
+            current_user.last_name = user_email_name_form.cleaned_data['last_name']
+            current_user.email = user_email_name_form.cleaned_data['email']
             try:
                 current_profile = current_user.profile
                 current_profile.phone = profile_edit_form.cleaned_data['phone']
@@ -112,8 +141,13 @@ def profile_edit(request, username):
                                                          picture=profile_edit_form.cleaned_data['picture'])
             current_profile.save()
             current_user.save()
-            # Cart.objects.create(profile=current_profile)
-            return redirect('vitrin:index')
+            print('all saved')
+            try:
+                Cart.objects.get(profile=current_profile)
+            except Cart.DoesNotExist:
+                Cart.objects.create(profile=current_profile)
+
+            return redirect('profile:profile_view', username=current_user.username)
 
     else:
         try:
@@ -122,16 +156,23 @@ def profile_edit(request, username):
         except Profile.DoesNotExist:
             profile_edit_form = ProfileEditForm()
         # email_form = EmailUserForm({'email': username}) if re.search(email_regex, username) else EmailUserForm()
-        if User.objects.get(username=username).email:
-            email_form = EmailUserForm({'email': User.objects.get(username=username).email})
+        user = User.objects.get(username=username)
+
+        user_email_name_form = UserEmailNameForm(initial={
+                'email': user.email if user.email else '',
+                'first_name': user.first_name if user.first_name else '',
+                'last_name': user.last_name if user.last_name else ''
+            })
+        """
         else:
-            email_form = EmailUserForm()
+            user_email_name_form = UserEmailNameForm()
+        """
 
     return render(request, 'profile/templates/profile_edit.html', context={'profile_edit_form': profile_edit_form,
-                                                                           'email_form': email_form})
+                                                                           'email_form': user_email_name_form})
 
 
 @login_required
 def user_logout(request, username=None):
     logout(request)
-    return redirect('vitrin:index')
+    return redirect('shop:index')
