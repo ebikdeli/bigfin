@@ -3,8 +3,12 @@ from django.utils.text import slugify
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
+<<<<<<< HEAD
 from django.contrib.auth.models import User
 # from electroshop.settings import dev
+=======
+from bigfin.settings import dev
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
 
 
 def discount_model_validator(discount: float) -> float:  # validate 'discount_percent' field before saved into database
@@ -25,11 +29,18 @@ def customer_directory_path(instance, filename):    # To save users' logo in cus
 
 
 class Profile(models.Model):
+<<<<<<< HEAD
     # user = models.OneToOneField(dev.AUTH_USER_MODEL,
     user = models.OneToOneField(User,
                                 related_name='profile',
                                 on_delete=models.CASCADE)
     phone = models.CharField(max_length=12, blank=True)
+=======
+    user = models.OneToOneField(dev.AUTH_USER_MODEL,
+                                related_name='profile',
+                                on_delete=models.CASCADE)
+    phone = models.CharField(max_length=12)
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
     address = models.TextField(blank=True)
     score = models.PositiveIntegerField(default=0)
     discount_value = models.PositiveIntegerField(default=0)
@@ -39,7 +50,11 @@ class Profile(models.Model):
                                          default=0)
     lifetime_orders_price = models.PositiveIntegerField(default=0)
     picture = models.ImageField(upload_to=customer_directory_path, blank=True)
+<<<<<<< HEAD
     slug = models.SlugField(blank=True)
+=======
+    slug = models.SlugField()
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     # likes

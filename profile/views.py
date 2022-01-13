@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+<<<<<<< HEAD
 from django.db import IntegrityError
 # from django.contrib.auth.views import auth_login
 from cart.models import Cart
@@ -10,6 +11,14 @@ from profile.models import Profile
 from profile.forms import ProfileEditForm, UserEmailNameForm,\
     ProfileCreateForm, UserCreateForm, UserAuthenticationLoginForm
 # import re
+=======
+# from cart.models import Cart
+from django.contrib.auth.views import auth_login
+from profile.models import Profile
+from profile.forms import ProfileEditForm, EmailUserForm,\
+    ProfileCreateForm, UserCreateForm, UserAuthenticationLoginForm
+import re
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
 
 """
 def profile_login(request):
@@ -48,6 +57,7 @@ def user_login_signup(request):
 def user_signup(request):
     if request.method == 'POST':
         user_create_form = UserCreateForm(data=request.POST)
+<<<<<<< HEAD
 
         if user_create_form.is_valid():
             try:
@@ -74,10 +84,17 @@ def user_signup(request):
         else:
             messages.add_message(request, messages.ERROR, 'اطلاعات را به درستی وارد کنید')
             return redirect('profile:login_signup')
+=======
+        if user_create_form.is_valid():
+            pass
+    else:
+        return redirect('profile:login_signup')
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
 
 
 def user_login(request):
     if request.method == 'POST':
+<<<<<<< HEAD
         user_auth_form = UserAuthenticationLoginForm(data=request.POST)
 
         if user_auth_form.is_valid():
@@ -101,6 +118,23 @@ def user_login(request):
                 return redirect('shop:index')
 
             except User.DoesNotExist:
+=======
+
+        user_auth_form = UserAuthenticationLoginForm(data=request.POST)
+        print(user_auth_form)
+        if user_auth_form.is_valid():
+            user_auth = user_auth_form.cleaned_data
+            user = authenticate(request, username=user_auth['username_or_email_login'], password=user_auth['password'])
+            if user is not None:
+                login(request, user)
+                return redirect('vitrin:index')
+            try:
+                user = User.objects.get(email=user_auth['username_or_email_login'])
+                login(request, user)
+                return redirect('vitrin:index')
+            except User.DoesNotExist:
+                print('user not exist!')
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
                 messages.add_message(request, messages.ERROR, 'اطلاعات وارد شده اشتباه است!')
                 return redirect('profile:login_signup')
     else:
@@ -123,6 +157,7 @@ def profile_edit(request, username):
         'address': Profile.address,
         'picture': Profile.picture,
     }
+<<<<<<< HEAD
     # email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 
     if request.method == 'POST':
@@ -134,6 +169,16 @@ def profile_edit(request, username):
             current_user.first_name = user_email_name_form.cleaned_data['first_name']
             current_user.last_name = user_email_name_form.cleaned_data['last_name']
             current_user.email = user_email_name_form.cleaned_data['email']
+=======
+    email_regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+
+    if request.method == 'POST':
+        profile_edit_form = ProfileEditForm(data=request.POST, files=request.FILES)
+        email_form = EmailUserForm(data=request.POST)
+        if profile_edit_form.is_valid() and email_form.is_valid():
+            current_user = User.objects.get(username=username)
+            current_user.email = email_form.cleaned_data['email']
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
             try:
                 current_profile = current_user.profile
                 current_profile.phone = profile_edit_form.cleaned_data['phone']
@@ -146,6 +191,7 @@ def profile_edit(request, username):
                                                          picture=profile_edit_form.cleaned_data['picture'])
             current_profile.save()
             current_user.save()
+<<<<<<< HEAD
             print('all saved')
             try:
                 Cart.objects.get(profile=current_profile)
@@ -153,6 +199,10 @@ def profile_edit(request, username):
                 Cart.objects.create(profile=current_profile)
 
             return redirect('profile:profile_view', username=current_user.username)
+=======
+            # Cart.objects.create(profile=current_profile)
+            return redirect('vitrin:index')
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
 
     else:
         try:
@@ -161,6 +211,7 @@ def profile_edit(request, username):
         except Profile.DoesNotExist:
             profile_edit_form = ProfileEditForm()
         # email_form = EmailUserForm({'email': username}) if re.search(email_regex, username) else EmailUserForm()
+<<<<<<< HEAD
         user = User.objects.get(username=username)
 
         user_email_name_form = UserEmailNameForm(initial={
@@ -175,9 +226,22 @@ def profile_edit(request, username):
 
     return render(request, 'profile/templates/profile_edit.html', context={'profile_edit_form': profile_edit_form,
                                                                            'email_form': user_email_name_form})
+=======
+        if User.objects.get(username=username).email:
+            email_form = EmailUserForm({'email': User.objects.get(username=username).email})
+        else:
+            email_form = EmailUserForm()
+
+    return render(request, 'profile/templates/profile_edit.html', context={'profile_edit_form': profile_edit_form,
+                                                                           'email_form': email_form})
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
 
 
 @login_required
 def user_logout(request, username=None):
     logout(request)
+<<<<<<< HEAD
     return redirect('shop:index')
+=======
+    return redirect('vitrin:index')
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")

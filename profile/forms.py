@@ -1,6 +1,10 @@
 from django import forms
+<<<<<<< HEAD
 from django.core.exceptions import ValidationError
 # from django.contrib.auth.forms import UserCreationForm
+=======
+from django.contrib.auth.forms import UserCreationForm
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
 from profile.models import Profile
 
 
@@ -10,6 +14,7 @@ class ProfileCreateForm(forms.ModelForm):
         fields = ['phone', 'address', 'picture']
 
 
+<<<<<<< HEAD
 # class UserCreateForm(UserCreationForm):
     # email = forms.EmailField()
 
@@ -25,6 +30,11 @@ class UserCreateForm(forms.Form):
             raise ValidationError('پسوردها با هم یکی نیستند')
         return data
 
+=======
+class UserCreateForm(UserCreationForm):
+    email = forms.EmailField()
+
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
 
 class ProfileEditForm(forms.ModelForm):
     class Meta:
@@ -32,9 +42,13 @@ class ProfileEditForm(forms.ModelForm):
         fields = ['phone', 'address', 'picture', ]
 
 
+<<<<<<< HEAD
 class UserEmailNameForm(forms.Form):
     first_name = forms.CharField()
     last_name = forms.CharField()
+=======
+class EmailUserForm(forms.Form):
+>>>>>>> ffdcd51 (Revert "13/1/2022-13:47 PM")
     email = forms.EmailField()
 
 
