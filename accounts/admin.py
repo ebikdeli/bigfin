@@ -6,16 +6,16 @@ from .models import User
 
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ('email', 'phone', 'address', 'is_admin')
+    list_display = ('email', 'username', 'address', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('phone', 'password')}),
+        (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': ('email', 'address', 'name',)}),
         ('Scores', {'fields': ('score', 'score_lifetime', 'discount_value', 'discount_percent')}),
         ('Permissions', {'fields': ('is_admin',)}),
     )
-    search_fields = ('phone',)
-    ordering = ('phone',)
+    search_fields = ('username',)
+    ordering = ('username',)
     filter_horizontal = ()
 
 

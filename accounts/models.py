@@ -6,16 +6,16 @@ from django.core.validators import MaxValueValidator, MinValueValidator, MaxLeng
 
 class MyUserManager(BaseUserManager):
     """Create custom user manager for our custom User"""
-    def create_user(self, phone, password=None, name=None, **kwargs):
+    def create_user(self, username, password=None, name=None, **kwargs):
         """
-        Creates and saves a User with the given email and password.
+        Creates and saves a User with the given username and password.
         """
-        if not phone:
-            raise ValueError(_('Users must have an phone number'))
+        if not username:
+            raise ValueError(_('Users must have an username, email or phone'))
 
         # actually below line is this <==> user = User(email=User.objects.normalize_email(email), password=password)
         user = self.model(
-            phone=phone,
+            username=username,
             password=password,
             name=name
         )
@@ -23,12 +23,12 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone, password=None, name=None, **kwargs):
+    def create_superuser(self, username, password=None, name=None, **kwargs):
         """
         Creates and saves a superuser with the given email and password.
         """
         user = self.create_user(
-            phone,
+            username,
             password=password,
             name=name,
         )
@@ -40,12 +40,12 @@ class MyUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    phone = models.CharField(max_length=13,
-                             unique=True,
-                             verbose_name=_('phone'),
-                             validators=[MaxLengthValidator(13, _('phone number is too long')),
-                                         MinLengthValidator(11, _('phone number length is too short'))],
-                             )
+    username = models.CharField(max_length=13,
+                                unique=True,
+                                verbose_name=_('username'),
+                                validators=[MaxLengthValidator(33, _('username is too long')),
+                                            MinLengthValidator(3, _('username is too short'))],
+                                )
     email = models.EmailField(unique=True, verbose_name=_('email'), null=True, blank=True)
     name = models.CharField(verbose_name=_('name'),
                             max_length=50,
@@ -72,10 +72,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated = models.DateTimeField(auto_now=True)
     objects = MyUserManager()
     
-    USERNAME_FIELD = 'phone'
+    USERNAME_FIELD = 'username'
 
     def __str__(self) -> str:
-        return self.phone
+        return self.username
     
     def get_absolute_url(self):
         # return reverse("model_detail", kwargs={"pk": self.pk, "slug": self.slug})

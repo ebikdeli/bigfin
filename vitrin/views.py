@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, AnonymousUser
-from profile.models import Profile
+# from profile.models import Profile
 import websocket
 import json
 import requests
