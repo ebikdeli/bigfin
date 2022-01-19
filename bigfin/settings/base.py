@@ -17,33 +17,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
 
+    'rest_framework',
+    'taggit',
+    'django_countries',
+    # 'social_django',
+
+    
     'vitrin',
     'blog',
-    'toturial',
+    'tutorial',
     'trade',
-    'profile',
-    'social_login',
+    'accounts',
     'dashboard',
     'wallet',
     'cart',
-
-    'wagtail.contrib.forms',
-    'wagtail.contrib.redirects',
-    'wagtail.embeds',
-    'wagtail.sites',
-    'wagtail.users',
-    'wagtail.snippets',
-    'wagtail.documents',
-    'wagtail.images',
-    'wagtail.search',
-    'wagtail.admin',
-    'wagtail.core',
-    'wagtail.contrib.modeladmin',
-
-    'modelcluster',
-    'taggit',
-    'django_countries',
-    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +41,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'bigfin.urls'
@@ -103,8 +89,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Authentication settings
 
-AUTH_USER_MODEL = 'auth.User'
-
+AUTH_USER_MODEL = 'accounts.User'
+"""
 AUTHENTICATION_BACKENDS = [
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.linkedin.LinkedinOAuth2',
@@ -117,7 +103,7 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '501246578971-mjnug89a0d06euip8so4th7c5dikac2d.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'yChaL7cwc_nAUdYYJP42GwB5'
-
+"""
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -144,5 +130,3 @@ LOGIN_URL = 'home'
 LOGIN_REDIRECT_URL = reverse_lazy('vitrin:index')
 LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = reverse_lazy('vitrin:index')
-
-WAGTAIL_SITE_NAME = 'Welcome to BigFin website'
