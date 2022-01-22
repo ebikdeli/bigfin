@@ -1,17 +1,14 @@
 #BACKEND
 
-<<<<<<< HEAD
 # !__init__.py <==> This should be after '**/migrations/**' unless it skipped
 **/__pycharm__*
 **__pychache__/**
 **/migrations/**
 !__init__.py
-=======
-!__init__.py
+
 **/__pycharm__*
 **__pychache__/**
 **/migrations/**
->>>>>>> 7de3ed5321e0f554fe5d4c270a09a98f49779122
 **.pyc
 *.pyc
 *.idea/**
