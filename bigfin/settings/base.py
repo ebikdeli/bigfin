@@ -24,9 +24,9 @@ INSTALLED_APPS = [
 
     
     'vitrin',
+    'currency',
     'blog',
     'tutorial',
-    'trade',
     'accounts',
     'dashboard',
     'wallet',
