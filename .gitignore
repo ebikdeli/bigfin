@@ -15,6 +15,7 @@
 *.sqlite3
 **assets/**
 **media/**
+db.sqlite3
 
 
 
