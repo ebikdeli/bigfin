@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator
@@ -64,12 +65,12 @@ class User(AbstractBaseUser, PermissionsMixin):
                                                MaxValueValidator(100, _('percent could not be more than 100')),
                                                MinValueValidator(0, _('percent could not be less than 0'))
                                            ])
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True, verbose_name=_('is active'))
+    is_staff = models.BooleanField(default=False, verbose_name=_('is staff'))
+    is_admin = models.BooleanField(default=False, verbose_name=_('is admin'))
     slug = models.SlugField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
+    updated = models.DateTimeField(auto_now=True, verbose_name=_('updated'))
     objects = MyUserManager()
     
     USERNAME_FIELD = 'username'
@@ -78,7 +79,27 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
     
     def get_absolute_url(self):
-        # return reverse("model_detail", kwargs={"pk": self.pk, "slug": self.slug})
-        # OR
-        # return reverse('model_detail', self.pk, self.slug))
         pass
+
+
+class Address(models.Model):
+    """This model used for comperhensive address usage for user"""
+    user = models.ForeignKey(get_user_model(),
+                             related_name='user_address',
+                             on_delete=models.CASCADE,
+                             verbose_name=_('user address'))
+    country = models.CharField(verbose_name=_('country'), max_length=50, blank=True, null=True)
+    state = models.CharField(verbose_name=_('province, state or municipality'), max_length=50, blank=True, null=True)
+    city = models.CharField(verbose_name=_('city'), max_length=50, blank=True, null=True)
+    line = models.TextField(verbose_name='line', blank=True, null=True)
+    mobile = models.CharField(verbose_name=_('mobile number'), max_length=13, blank=True, null=True,
+                              validators=[MaxLengthValidator(13, _('mobile phone cannot be longer than 13 chars')),
+                                          MinLengthValidator(11, _('mobile phone cannot be shorter than 11 chars'))])
+    phone = models.CharField(verbose_name=_('phone number'), max_length=13, blank=True, null=True,
+                             validators=[MaxLengthValidator(13, _('phone cannot be longer than 13 chars')),
+                                         MinLengthValidator(11, _('phone cannot be shorter than 11 chars'))])
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created'))
+    updated = models.DateTimeField(auto_now=True, verbose_name=_('updated'))
+
+    def __str__(self):
+        return f'{self.user.username}_address({self.id})'
