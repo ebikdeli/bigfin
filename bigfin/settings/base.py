@@ -24,6 +24,7 @@ INSTALLED_APPS = [
 
     
     'vitrin',
+    'api',
     'currency',
     'blog',
     'tutorial',

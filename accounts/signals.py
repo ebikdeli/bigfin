@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import slugify
 
 import decimal
 
@@ -32,3 +33,10 @@ def count_user_score_and_profile_discount(sender, instance, **kwargs):
         score_count_helper(score, 2)
     elif instance.score > 1500:
         score_count_helper(score, 3)
+
+
+@receiver(pre_save, sender=get_user_model())
+def fill_slug_field(sender, instance, **kwargs):
+    """Fill slug field for user"""
+    if not instance.slug:
+        instance.slug = slugify(instance.username)
