@@ -7,13 +7,14 @@ from currency.models import Currency
 from wallet.models import Wallet
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+# class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):    
     """Serializer used for Users"""
-    url = serializers.HyperlinkedIdentityField(view_name='some view')
+    # url = serializers.HyperlinkedIdentityField(view_name='some view')
 
     class Meta:
         model = get_user_model()
-        include = ['username', 'password', 'email', 
+        fields = ['username', 'password', 'email', 
                    'name', 'is_admin', 'picture',
                    'score', 'is_superuser', 'is_active']
 
@@ -24,7 +25,7 @@ class UserAddress(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Address
-        include = '__all__'
+        fields = '__all__'
 
 
 class CurrencySerializer(serializers.HyperlinkedModelSerializer):
@@ -33,7 +34,7 @@ class CurrencySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Currency
-        include = '__all__'
+        fields = '__all__'
 
 
 class WalletSerializer(serializers.HyperlinkedModelSerializer):
@@ -42,4 +43,4 @@ class WalletSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Wallet
-        include = '__all__' 
+        fields = '__all__' 

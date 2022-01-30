@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
+from rest_framework.authtoken.models import Token
 
 import redis
 from redis import exceptions
@@ -25,8 +26,16 @@ def price_list(request):
     return JsonResponse({'bitcoin': float(bitcoin), 'dogecoin': float(dogecoin), 'ethereum': float(ethereum)})
 
 
-def page1(request):
-    return render(request, 'vitrin/templates/page1.html')
+def create_token(request):
+    if request.user.is_authenticated:
+        token = Token.objects.filter(user=request.user)
+        if token.exists():
+            return HttpResponse(f'<h1>User {request.user} already has a authentication token: {token.first().key}</h1>')
+        token = Token.objects.create(user=request.user)
+        print('Token created for ', request.user.username, '\n')
+        print(token, '  ', type(token))
+        return JsonResponse(data={'token': token.key}, safe=False)
+    return HttpResponse('<h2>User is not authenticated</h2>')
 
 
 def page2(request):

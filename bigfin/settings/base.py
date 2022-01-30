@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django_extensions',
 
     'rest_framework',
+    'rest_framework.authtoken',
     'taggit',
     'django_countries',
     # 'social_django',
@@ -131,3 +132,13 @@ LOGIN_URL = 'home'
 LOGIN_REDIRECT_URL = reverse_lazy('vitrin:index')
 LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = reverse_lazy('vitrin:index')
+
+# Rest framework settings
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ]
+}

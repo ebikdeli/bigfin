@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
+from rest_framework.authtoken.models import Token
 
 import decimal
 
@@ -40,3 +41,10 @@ def fill_slug_field(sender, instance, **kwargs):
     """Fill slug field for user"""
     if not instance.slug:
         instance.slug = slugify(instance.username)
+
+
+@receiver(post_save, sender=get_user_model())
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    """Create Authentication token for newly created user"""
+    if created:
+        Token.objects.create(user=instance)
