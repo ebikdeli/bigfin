@@ -2,7 +2,6 @@
 This module defines 'login' function. This function used to login users in the 'normal django views' with 'DRF authtoken'.
 With this function we can integrate normal django views authentication with DRF token based authentication.
 """
-from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 from rest_framework.authtoken.models import Token
 
