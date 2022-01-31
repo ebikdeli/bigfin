@@ -5,21 +5,12 @@ server based project.
 """
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.contrib.auth import authenticate
+
+from accounts.login import log_in
 
 
 def dashboard(request):
     """Main dashboard view"""
-    try:
-        # print(request.auth)
-        token = request.headers.get('Authorization', None)
-        if token:
-            token = token.split()[1]
-            print(token)
-        else:
-            print('No authentication made')
-    except AttributeError:
-        print('No user authenticated')
-
-    print(request.user, "  ", request.user.is_authenticated)
+    a, b = log_in(request)
+    print(a, '  ', b)
     return JsonResponse(data='This is user dashboard', safe=False)
