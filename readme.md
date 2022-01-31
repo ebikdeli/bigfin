@@ -10,3 +10,6 @@ authenticate users in oridnary django views. Django views - unlike restframework
 From above note we should remembre 'DRF documents' that says: "requests in DRF views are not same as default
 django views requests".
 ** But session data could be passed between 'django requests' and 'DRF requests'!
+
+Althought by default 'DRF authtokens' could not used to authenticate users in regular django views, we implemented
+a process in 'accounts.logins' module to authenticate users with 'DRF tokens'.
