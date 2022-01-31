@@ -6,11 +6,11 @@ server based project.
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from accounts.login import log_in
+from accounts.logins import token_login
 
 
 def dashboard(request):
     """Main dashboard view"""
-    a, b = log_in(request)
+    a, b = token_login(request)
     print(a, '  ', b)
     return JsonResponse(data='This is user dashboard', safe=False)

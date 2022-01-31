@@ -5,9 +5,9 @@ With this function we can integrate normal django views authentication with DRF 
 from django.contrib.auth import login
 from rest_framework.authtoken.models import Token
 
-def log_in(request):
-    """Login users with token header:
-      log_in(request)->tuple(bool, str)
+def token_login(request):
+    """
+    Login users with token header:: log_in(request)->tuple(bool, str)
     """
     if not request.user.is_authenticated:
         try:
