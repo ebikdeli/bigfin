@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block head %}
+    {% endblock head %}
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+<body>
+    {% block header %}
+    {% endblock header %}
+
+    {% block content %}
+    {% endblock content %}
+
+    {% block footer %}
+    {% endblock footer %}
+
+    {% block todo %}
+        <a href="{% url 'todo:lists' %}">Todo Lists</a>
+        <a href="{% url 'todo:mine' %}">My Tasks</a>
+    {% endblock todo %}
+</body>
+    {% block scripts %}
+    {% endblock scripts %}
+</html>

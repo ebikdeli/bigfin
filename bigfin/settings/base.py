@@ -15,6 +15,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'django.contrib.sites',
     'django_extensions',
 
     'rest_framework',
@@ -23,6 +25,7 @@ INSTALLED_APPS = [
     'django_countries',
     # 'social_django',
 
+    'todo',
     
     'vitrin',
     'api',
@@ -33,6 +36,8 @@ INSTALLED_APPS = [
     'dashboard',
     'wallet',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
