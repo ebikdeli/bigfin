@@ -6,7 +6,7 @@ import uuid
 
 @receiver(post_save, sender='ticketing.Ticketing')
 def ticket_uuid(sender, instance, **kwargs):
-    """Check if there are uuid"""
+    """Check if there is uuid on ticketing"""
     if not instance.ticket_id:
         instance.ticket_id = str(uuid.uuid4())
         instance.save()

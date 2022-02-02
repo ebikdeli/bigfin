@@ -37,12 +37,12 @@ class Ticketing(models.Model):
 
     ticket_id = models.UUIDField(verbose_name=_('ticket id'), default=uuid.uuid4, editable=False)
     user = models.ForeignKey(get_user_model(),
-                             related_name='tickets',
+                             related_name='user_tickets',
                              on_delete=models.CASCADE,
                              verbose_name=_('user'))
     group = models.ForeignKey(Group,
                               on_delete=models.SET_NULL,
-                              related_name='tickets',
+                              related_name='group_tickets',
                               verbose_name=_('group'),
                               blank=True,
                               null=True)
@@ -60,14 +60,15 @@ class Answer(models.Model):
     """For every Ticketing model, there would be unlimited Answers"""
     ticketing = models.ForeignKey('Ticketing',
                                    on_delete=models.CASCADE,
-                                   related_name='answers',
+                                   related_name='ticketing_answers',
                                    verbose_name=_('ticketing'))
     user = models.ForeignKey(get_user_model(),
-                             related_name='tickets',
+                             related_name='user_answers',
                              on_delete=models.CASCADE,
                              verbose_name=_('user'))
     message = models.TextField(verbose_name=_('message'))
-    file = models.FileField(verbose_name=_('attach file (if any)'), upload_to=file_upload_to, blank=True, null=True)
+    # file = models.FileField(verbose_name=_('attach file (if any)'), upload_to=file_upload_to, blank=True, null=True)
+    files = GenericRelation('FileUpload')
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
     def __str__(self):
