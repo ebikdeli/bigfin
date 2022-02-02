@@ -9,6 +9,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('api/', include('api.urls')),
+    path('ticket/', include('ticketing.urls')),
     path('todo/', include('todo.urls', namespace="todo")),
     path('', include('vitrin.urls')),
 ]

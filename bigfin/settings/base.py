@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'accounts',
     'dashboard',
     'wallet',
+    'ticketing',
 ]
 
 SITE_ID = 1
