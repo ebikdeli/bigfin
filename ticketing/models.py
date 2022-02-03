@@ -25,6 +25,19 @@ def file_upload_to(instance, filename):
     return f'{today}/{filename}'
 
 
+class FileUpload(models.Model):
+    """FileUpload model is content type model that holds every file we want to upload for every model in the project"""
+    file = models.FileField(verbose_name=_('attach file (if any)'), upload_to=file_upload_to, blank=True, null=True)
+    caption = models.CharField(verbose_name=_('caption'), max_length=200, blank=True, null=True)
+    created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    def __str__(self):
+        return f'File({self.id})'
+
+
 class Ticketing(models.Model):
     """This model represents Tickets that user creates"""
     EMERGENCY_CHOISES = [
@@ -51,7 +64,7 @@ class Ticketing(models.Model):
     message = models.TextField(verbose_name=_('message'))
     is_published = models.BooleanField(verbose_name=_('is published'), default=True)
     is_answered = models.BooleanField(verbose_name=_('is answered'), default=False)
-    files = GenericRelation('FileUpload')
+    files = GenericRelation('FileUpload', related_query_name='ticketing')
     # file = models.FileField(verbose_name=_('attach file (if any)'), upload_to=file_upload_to, blank=True, null=True)
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
@@ -68,21 +81,8 @@ class Answer(models.Model):
                              verbose_name=_('user'))
     message = models.TextField(verbose_name=_('message'))
     # file = models.FileField(verbose_name=_('attach file (if any)'), upload_to=file_upload_to, blank=True, null=True)
-    files = GenericRelation('FileUpload')
+    files = GenericRelation(FileUpload, related_query_name='answer')
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
     def __str__(self):
-        return f'{self.text[:10]}'
-
-
-class FileUpload(models.Model):
-    """FileUpload model is content type model that holds every file we want to upload for every model in the project"""
-    file = models.FileField(verbose_name=_('attach file (if any)'), upload_to=file_upload_to, blank=True, null=True)
-    caption = models.CharField(verbose_name=_('caption'), max_length=200, blank=True, null=True)
-    created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    def __str__(self):
-        return f'File({self.id})'
+        return f'{self.id}_{self.message[:10]}'
