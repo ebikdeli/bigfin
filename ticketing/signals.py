@@ -19,3 +19,6 @@ def is_answered_ticketing(sender, instance, created, **kwargs):
         if instance.user.is_staff:
             instance.ticketing.is_answered = True
             instance.ticketing.save()
+        else:
+            instance.ticketing.is_answered = False
+            instance.ticketing.save()

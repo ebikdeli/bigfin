@@ -32,10 +32,10 @@ INSTALLED_APPS = [
     'currency',
     'blog',
     'tutorial',
-    'accounts',
+    'accounts.apps.AccountsConfig',
     'dashboard',
     'wallet',
-    'ticketing',
+    'ticketing.apps.TicketingConfig',
 ]
 
 SITE_ID = 1

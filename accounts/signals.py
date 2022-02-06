@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 import decimal
 
 
-@receiver(pre_save, sender=get_user_model())
+@receiver(pre_save, sender=settings.AUTH_USER_MODEL)
 def validate_user_discount_percent(sender, instance, **kwargs):
     """Count user account discount"""
     if instance.discount_percent > 100:
@@ -19,7 +19,7 @@ def validate_user_discount_percent(sender, instance, **kwargs):
         raise ValidationError(_('discount percent could not be less than 0'))
 
 
-@receiver(pre_save, sender=get_user_model())
+@receiver(pre_save, sender=settings.AUTH_USER_MODEL)
 def count_user_score_and_profile_discount(sender, instance, **kwargs):
     """Count user account score"""
     def score_count_helper(instance_score, discount_multiplier):
@@ -36,14 +36,14 @@ def count_user_score_and_profile_discount(sender, instance, **kwargs):
         score_count_helper(score, 3)
 
 
-@receiver(pre_save, sender=get_user_model())
+@receiver(pre_save, sender=settings.AUTH_USER_MODEL)
 def fill_slug_field(sender, instance, **kwargs):
     """Fill slug field for user"""
     if not instance.slug:
         instance.slug = slugify(instance.username)
 
 
-@receiver(post_save, sender=get_user_model())
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     """Create Authentication token for newly created user"""
     if created:

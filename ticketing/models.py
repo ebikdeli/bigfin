@@ -72,9 +72,9 @@ class Ticketing(models.Model):
 class Answer(models.Model):
     """For every Ticketing model, there would be unlimited Answers"""
     ticketing = models.ForeignKey('Ticketing',
-                                   on_delete=models.CASCADE,
-                                   related_name='ticketing_answers',
-                                   verbose_name=_('ticketing'))
+                                  on_delete=models.CASCADE,
+                                  related_name='ticketing_answers',
+                                  verbose_name=_('ticketing'))
     user = models.ForeignKey(get_user_model(),
                              related_name='user_answers',
                              on_delete=models.CASCADE,

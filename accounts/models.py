@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator
@@ -13,8 +13,6 @@ class MyUserManager(BaseUserManager):
         """
         if not username:
             raise ValueError(_('Users must have an username, email or phone'))
-
-        # actually below line is this <==> user = User(email=User.objects.normalize_email(email), password=password)
         user = self.model(
             username=username,
             password=password,
@@ -83,8 +81,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Address(models.Model):
-    """This model used for comperhensive address usage for user"""
-    user = models.ForeignKey(get_user_model(),
+    """This model used for comprehensive address usage for user"""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              related_name='user_address',
                              on_delete=models.CASCADE,
                              verbose_name=_('user address'))
