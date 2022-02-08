@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'taggit',
     'django_countries',
+    'django_filters',
     # 'social_django',
 
     'todo',
