@@ -65,7 +65,7 @@ class AddressSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for Address model"""
     url = serializers.HyperlinkedIdentityField(view_name='accounts:address-detail')
     user = UserSerializer(read_only=True, many=False)
-    """IMPORTANT: If we have 'allow_null' field, it's highly recommended to it's 'default=True' arguement."""
+    """IMPORTANT: If we have 'allow_null' field, it's highly recommended to set it's 'default=None' arguement."""
     user_obj = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(),
                                                   many=False,
                                                   write_only=True,
