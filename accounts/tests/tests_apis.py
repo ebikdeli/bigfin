@@ -5,6 +5,9 @@ https://www.django-rest-framework.org/api-guide/routers/#defaultrouter
 2- To be able to simulate 'request' object we use these documents:
 https://docs.djangoproject.com/en/4.0/topics/testing/advanced/#the-request-factory
 https://www.django-rest-framework.org/api-guide/testing/#apirequestfactory
+
+3- Because we use Serializer inheritance for User model serializer in the VIEWs, We must use UserNewSerializer
+for test. Actually we should use the child serializer for everything.
 """
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -13,7 +16,7 @@ from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework import status
 
 from accounts.models import Address
-from accounts.serializers import UserSerializer, AddressSerializer
+from accounts.serializers import UserNewSerializer, UserSerializer, AddressSerializer
 
 
 class TestUserSerializer(TestCase):
@@ -38,7 +41,7 @@ class TestUserSerializer(TestCase):
         # NOTE: First we should simulate 'request' object for the HyperllinkedModelSerializer or if there
         # are needs that we should provide the 'request' object for our serializer:
         request = APIRequestFactory().get(reverse('accounts:user-list'))
-        user_list = UserSerializer(get_user_model().objects.all(), many=True, context={'request': request})
+        user_list = UserNewSerializer(get_user_model().objects.all(), many=True, context={'request': request})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(user_list.data, response.json())
@@ -53,7 +56,7 @@ class TestUserSerializer(TestCase):
 
         # Get the same user with serializer
         request = APIRequestFactory().get(reverse('admin:index'))   # It's not much matter where we get request!?
-        serializer = UserSerializer(self.admin, many=False, context={'request': request})
+        serializer = UserNewSerializer(self.admin, many=False, context={'request': request})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), serializer.data)
@@ -87,10 +90,10 @@ class TestUserSerializer(TestCase):
         new_user_data = response.json()
         new_user = get_user_model().objects.get(username=new_user_data['username'])
         request = APIRequestFactory().get(reverse('admin:index'))
-        serializer = UserSerializer(instance=get_user_model().objects.get(username=new_user_data['username']),
-                                    many=False,
-                                    context={'request': request})
-        
+        serializer = UserNewSerializer(instance=get_user_model().objects.get(username=new_user_data['username']),
+                                       many=False,
+                                       context={'request': request})
+
         self.assertEqual(serializer.data, response.json())
         self.assertEqual(new_user.username, serializer.data['username'])
     
@@ -190,12 +193,27 @@ class TestAddress(TestCase):
         Test if user can create address. Remember if there is a foreign key field in the model, we shoul
         set the field with 'pk' by default or any other field that spicified as 'lookup_field'.
         """
-        address_data = {'user': self.admin.id, 'country': 'Iran', 'city': 'Ahwaz'}
-        response = self.client.post(path=reverse('accounts:address-list'), data=address_data)
+        # First we test if bad data returns bad request:
+        bad_data = {'country': 'Iran', 'city': 'Ahwaz'}
+        response = self.client.post(path=reverse('accounts:address-list'), data=bad_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        # Test with user_obj (or create address with DRF GUI)
+        address_data_user_obj = {'user_obj': self.admin.id, 'country': 'Iran', 'city': 'Ahwaz' }
+        response = self.client.post(path=reverse('accounts:address-list'), data=address_data_user_obj)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Test with username(or create address with client-server)
+        address_data_user_obj = {'username': self.admin.username, 'country': 'Iran', 'city': 'Ahwaz' }
+        response = self.client.post(path=reverse('accounts:address-list'), data=address_data_user_obj)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Test if both fields provided without any problem
+        address_data_user_obj = {'user_obj': self.admin.id, 'username': self.admin.username, 'country': 'Iran', 'city': 'Ahwaz' }
+        response = self.client.post(path=reverse('accounts:address-list'), data=address_data_user_obj)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
     
-    def test_partial_address_api(self):
+    def test_partial_update_address_api(self):
         """Test parital update of address with 'patch' method"""
         # Create an address with any way we want:
         address_data = {'user': self.admin, 'country': 'Iran', 'city': 'Ahwaz'}
@@ -205,9 +223,9 @@ class TestAddress(TestCase):
         # self.client.post(path=reverse('accounts:address-list'), data=address_data)
         self.assertEqual(address.city, 'Ahwaz')
 
+        # It doesn't matter we use 'user_obj' or 'username' to identify 'user' obj for api request
         response = self.client.patch(path=reverse('accounts:address-detail', kwargs={'pk': address.id}),
-                                     data={'city': 'LA'})
-
+                                     data={'username': self.admin.username, 'city': 'LA'})
         # Remember to refresh object after every update
         address.refresh_from_db()
 
@@ -221,7 +239,7 @@ class TestAddress(TestCase):
         self.assertEqual(address.city, 'Ahwaz')
         self.assertIsNone(address.line)
 
-        new_data = {'user': self.admin.id, 'country': 'Iran', 'city': 'Tehran', 'line': 'Valjar 6'}
+        new_data = {'user_obj': self.admin.id, 'country': 'Iran', 'city': 'Tehran', 'line': 'Valjar 6'}
         response = self.client.put(path=reverse('accounts:address-detail', kwargs={'pk': address.id}),
                                    data=new_data)
         address.refresh_from_db()

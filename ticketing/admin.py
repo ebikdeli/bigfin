@@ -29,3 +29,4 @@ class AnswerAdmin(admin.ModelAdmin):
 
 admin.site.register(Ticketing, TicketingAdmin)
 admin.site.register(Answer, AnswerAdmin)
+admin.site.register(FileUpload)

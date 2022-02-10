@@ -13,3 +13,12 @@ django views requests".
 
 Althought by default 'DRF authtokens' could not used to authenticate users in regular django views, we implemented
 a process in 'accounts.logins' module to authenticate users with 'DRF tokens'.
+
+We implemented diffrent methods to add and show 'Ticketing' and 'Answer' in 'ticketing.serializer' module. It's a comperhensive method to be able list, post, retreive and update objects platform-independent.
+
+For test, we simulate 'request' object using RequestFactory and APIRequestFactory.
+
+If we are using 'HyperlinkedModelSerializer' or 'HyperlinkedFields' so we need to send 'request' to
+'serializer context', we can access to context data via 'self.context' dictionary in the serializer.
+for that purpose it's recommended to override or define 'list' method of VIEWs to be able to always
+send 'request' object via Serializer context.
