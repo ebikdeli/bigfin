@@ -17,6 +17,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
+from html5lib import serialize
 from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework import status
 
@@ -330,7 +331,7 @@ class TestFileUpload(TestCase):
         self.file_ticket = FileUpload.objects.create(**upload_file_data_ticket)
         self.file_answer = FileUpload.objects.create(**upload_file_data_answer)
     
-    def test_file_upload_content_type_inner_serializer_valid_with_api(self):
+    def test_fileupload_content_type_inner_serializer_valid_with_api(self):
         """
         THIS TEST IS SPECIAL. It has many things to learn from. From how to send data via serializer without any instance
         to how to create new object from ContentType model directly programmatically, From validating serializer and save
@@ -379,3 +380,117 @@ class TestFileUpload(TestCase):
         serializer = AnswerSerializer(data=answer_data, context={'request': self.request})
         serializer.is_valid()
         serializer.save()
+    
+
+    def test_fileupload_list_api(self):
+        """Test if fileupload serializer works properly"""
+        f1_data = {'file': SimpleUploadedFile(name='file1.jpg', content=b'file 1 contents')}
+        f2_data = {'file': SimpleUploadedFile(name='file2.jpg', content=b'file 2 contents')}
+        
+        f1, f2 = FileUpload.objects.bulk_create([FileUpload(**f1_data), FileUpload(**f2_data)])
+        self.assertTrue(f1.file)
+        self.assertTrue(f2.file)
+
+        response = self.client.get(reverse('ticketing:fileupload-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        serializer = FileUploadSerializer(instance=FileUpload.objects.all(), many=True, context={'request': self.request})
+
+        self.assertEqual(serializer.data, response.json())
+    
+    def test_fileupload_retreive_api(self):
+        """Test if retreive fileupload properly using api"""
+        response = self.client.get(reverse('ticketing:fileupload-detail', kwargs={'pk': self.file_answer.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        serializer = FileUploadSerializer(instance=self.file_answer, many=False, context={'request': self.request})
+
+        self.assertEqual(response.json(), serializer.data)
+    
+    def test_fileupload_create_bad_api(self):
+        """Test effect of bad request on the post method"""
+        # 'post' method only accepts 'serializable data' not arbitrary objects such as 'file' or 'content_type'
+        bad_data = {'file': 'bad file', 'content_type': -10, 'caption': 'Bad request'}
+        response = self.client.post(reverse('ticketing:fileupload-list'), data=bad_data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        serializer = FileUploadSerializer(FileUpload.objects.last(), many=False, context={'request': self.request})
+
+        self.assertNotEqual(response.json(), serializer.data)
+    
+    def test_fileupload_create_api(self):
+        """Test if new fileupload created properly"""
+        # We can create fileupload for any content_type we want (Or we can don't set content_type!). But in this test we use 'self.file_ticketing'
+        cont = ContentType.objects.get(model='ticketing')
+        upload_file_data = {'file': SimpleUploadedFile(name='file.exe', content=b'data'), 'content_type': cont.id, 'object_id': self.ticket.id, 'caption': 'This is caption'}
+
+        response_1 = self.client.post(reverse('ticketing:fileupload-list'), data=upload_file_data)
+        self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
+
+        serializer = FileUploadSerializer(instance=FileUpload.objects.last(), many=False, context={'request': self.request})
+
+        self.assertEqual(response_1.json(), serializer.data)
+
+        # Making another fileupload for fun but this time with 'self.file_answer'
+        cont2 = ContentType.objects.get(model='answer')
+        upload_file_data_ticket = {'file': SimpleUploadedFile(name='file2.exe', content=b'data2'), 'content_type': cont2.id, 'object_id': self.answer.id, 'caption': 'This is caption'}
+        response_2 = self.client.post(reverse('ticketing:fileupload-list'), data=upload_file_data_ticket)
+
+        self.assertEqual(response_2.status_code, status.HTTP_201_CREATED)
+        
+    def test_fileupload_partially_update_api(self):
+        """Test 'patch' method to partially update an fileupload with api"""
+        # Test current file_answer file of the answer
+        old_fileupload_file = self.file_answer.file
+        self.assertEqual(self.file_answer.file, old_fileupload_file)
+
+        new_data = {'file': SimpleUploadedFile(name='file3.exe', content=b'data3'), 'caption': 'Some caption'}
+        response = self.client.patch(reverse('ticketing:fileupload-detail', kwargs={'pk': self.file_answer.id}), data=new_data)
+
+        # Refresh self.file_answer object to show new data
+        self.file_answer.refresh_from_db()
+
+        serializer = FileUploadSerializer(instance=self.file_answer, many=False, context={'request': self.request})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), serializer.data)
+        self.assertNotEqual(self.file_answer.file, old_fileupload_file)
+    
+    def test_fileupload_totally_update_api(self):
+        """Test 'put' method to totally update an fileupload with api"""
+        # Test current fileupload caption. We are using 'self.file_ticket' for this test
+        old_file_ticket_caption = self.file_ticket.caption
+        self.assertEqual(self.file_ticket.caption, old_file_ticket_caption)
+
+        # Bad request for 'put' method because we don't provide 'content_type':
+        bad_data = {'file': SimpleUploadedFile(name='file3.exe', content=b'data3'), 'caption': 'Some caption'}
+        bad_response = self.client.put(reverse('ticketing:fileupload-detail', kwargs={'pk': self.file_ticket.id}), data=bad_data)
+        self.assertEqual(bad_response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # We have to provide completly new data for the self.file_ticket as oppose to 'patch' method
+        cont = ContentType.objects.get(model='ticketing')
+        new_data = {'file': SimpleUploadedFile(name='file4.exe', content=b'data4'),
+                    'content_type': cont.id,
+                    'object_id': self.file_ticket.id,
+                    'caption': 'New message'}
+        response = self.client.put(reverse('ticketing:fileupload-detail', kwargs={'pk': self.file_ticket.id}), data=new_data)
+
+        # Refresh fileupload object to show new data
+        self.file_ticket.refresh_from_db()
+
+        serializer = FileUploadSerializer(instance=self.file_ticket, many=False, context={'request': self.request})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), serializer.data)
+        self.assertNotEqual(self.file_ticket.caption, old_file_ticket_caption)
+    
+    def test_fileupload_delete_api(self):
+        """Test if we can delete an fileupload with api"""
+        # In this case we selected 'fiel_answer' to delete
+        self.assertIsNotNone(FileUpload.objects.filter(id=self.file_answer.id).last())
+
+        response = self.client.delete(path=reverse('ticketing:fileupload-detail', kwargs={'pk': self.file_answer.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertIsNone(FileUpload.objects.filter(id=self.file_answer.id).last())

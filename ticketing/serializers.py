@@ -64,7 +64,8 @@ class FileUploadRelatedField(serializers.HyperlinkedRelatedField):
 
 class FileUploadSerializer(serializers.HyperlinkedModelSerializer):
 # class FileUploadSerializer(serializers.ModelSerializer):
-    """Serializer for FileUpload"""
+    """Serializer for FileUpload. Remember when using API we should implement ways to have been able to
+    create or update 'FileUpload instances' that their 'content_type' and 'object_id' are empty."""
     url = serializers.HyperlinkedIdentityField(view_name='ticketing:fileupload-detail')
     # If we don't set 'content_type' field we won't have any problem!
     content_type = serializers.PrimaryKeyRelatedField(queryset=ContentType.objects.all(), many=False)
@@ -91,6 +92,8 @@ class TicketingSerializer(serializers.HyperlinkedModelSerializer):
 
     # This field only show 'answers' urls that related to current 'ticketing' instance (See 'ticketing' field related_name in the Answer model)
     ticketing_answers = serializers.HyperlinkedRelatedField(view_name='ticketing:answer-detail',read_only=True, many=True)
+    # If we forget to set 'many=True' for more than one object, we will an error like this:
+    # AttributeError: 'QuerySet' object has no attribute 'pk'
     """
     Below 'ticketing_answer' field shows all data about 'answers' that related to current 'ticketing' instance. BUT because AnswerSerializer
     is defined under TicketingSerializer we have to use 'serializer inheritance' to do that and currently it is out of
