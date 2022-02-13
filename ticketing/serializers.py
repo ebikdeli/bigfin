@@ -71,6 +71,14 @@ class FileUploadSerializer(serializers.HyperlinkedModelSerializer):
     # Only if we had ManyToMany relations we have to set 'many=True'. Otherwise it's not neccessary but not wrong either #
     # content_object = FileUploadRelatedField(read_only=True)
     content_object = FileUploadRelatedField(read_only=True, view_name='ticketing:fileupload-detail')
+    """
+    To use 'FileUploadSerializer' as a field type in 'TicketingSerializer' or 'AnswerSerializer' we must not use
+    'FileUploadRelatedField' in 'FileUploadSerializer' because of 'to_representation' method that uses both
+    TicketingSerializer and AnswerSerializer in its body in this causes of circular recursion uses and program stops working.
+    To fix the problem we can use below command for 'content_object' field to stops recursion:
+    # content_object = serializers.HyperlinkedRelatedField(read_only=True, view_name='ticketing:fileupload-detail')
+    """
+
     class Meta:
         model = FileUpload
         fields = '__all__'
@@ -83,17 +91,27 @@ class TicketingSerializer(serializers.HyperlinkedModelSerializer):
 
     # This field only show 'answers' urls that related to current 'ticketing' instance (See 'ticketing' field related_name in the Answer model)
     ticketing_answers = serializers.HyperlinkedRelatedField(view_name='ticketing:answer-detail',read_only=True, many=True)
-    # This field show all data about 'answers' that related to current 'ticketing' instance. BUT because AnswerSerializer
-    # is defined under TicketingSerializer we have to use 'serializer inheritance' to do that and currently it is out of
-    # respect to this work!
+    """
+    Below 'ticketing_answer' field shows all data about 'answers' that related to current 'ticketing' instance. BUT because AnswerSerializer
+    is defined under TicketingSerializer we have to use 'serializer inheritance' to do that and currently it is out of
+    respect to this work!
     # ticketing_answer = AnswerSerializer(read_only=True, many=True)
-
+    """
+    files = serializers.HyperlinkedRelatedField(view_name='ticketing:fileupload-detail', many=True, read_only=True)
+    """
+    # files = FileUploadSerializer(read_only=True, many=True)
+    To use FileUploadSerializer in TicketSerializer or AnswerSerializer we can't let Both of these serializer to
+    be used for any reason in FileUploadSerializer. On this matter we use both of these serializer in the
+    'to_representation' method of custom field in FileUploadSerializer. So if we use this serializer we get this error:
+    RecursionError: maximum recursion depth exceeded while calling a Python object
+    """
     user = UserSerializer(read_only=True, many=False)
     # It's better to set 'allow_null=True' fields 'default=None' arguement also
     user_obj = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(),
                                                   write_only=True,
                                                   allow_null=True,
-                                                  default=None)
+                                                  # default=None
+                                                  )
     # We can also write above command as HyperlinkedRelatedField like below line (but no recommended!):
     # user_obj = serializers.HyperlinkedRelatedField(queryset=get_user_model().objects.all(), write_only=True, view_name='accounts:user-detail', allow_null=True, default=None)
     """
@@ -104,7 +122,8 @@ class TicketingSerializer(serializers.HyperlinkedModelSerializer):
     username = serializers.CharField(allow_null=True,
                                      write_only=True,
                                      help_text='Based on authentication method enter username, email or phone',
-                                     default=None)
+                                     # default=None
+                                     )
     # 'files_upload' field is useing 'nested serializer' as 'child' for the list field. When we send data to this
     # this field, we should put data in a 'list' and the data should be just like the data we send to
     # FileUploadSerializer. In 'test_api' module we done it.
@@ -118,11 +137,11 @@ class TicketingSerializer(serializers.HyperlinkedModelSerializer):
 
     # These fields used for DRF GUI to create files (FileUploadModel) (Because it's not support ListField) #
     file_1 = serializers.FileField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
-    caption_1 = serializers.CharField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    caption_1 = serializers.CharField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
     file_2 = serializers.FileField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
-    caption_2 = serializers.CharField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    caption_2 = serializers.CharField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
     file_3 = serializers.FileField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
-    caption_3 = serializers.CharField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    caption_3 = serializers.CharField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
 
     class Meta:
         model = Ticketing
@@ -285,29 +304,33 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
                                                        many=False,
                                                        write_only=True,
                                                        allow_null=True,
-                                                       default=None)
+                                                       # default=None
+                                                       )
     ticket_id = serializers.UUIDField(write_only=True,
                                       allow_null=True,
                                       help_text='For client_server architecture method',
-                                      default=None)
+                                      # default=None
+                                      )
     # Following three fields used to show or get 'user' field on model
     user = UserSerializer(read_only=True, many=False)
     user_obj = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(),
                                                   many=False,
                                                   write_only=True,
                                                   allow_null=True,
-                                                  default=None)
+                                                  #default=None
+                                                  )
     username = serializers.CharField(write_only=True,
                                      allow_null=True,
                                      help_text='Based on authentication method enter username, email or phone',
-                                     default=None)
+                                     # default=None
+                                     )
     # These fields used for DRF GUI to create files (FileUploadModel) (Because it's not support ListField) #
-    file_1 = serializers.FileField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
-    caption_1 = serializers.CharField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
-    file_2 = serializers.FileField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
-    caption_2 = serializers.CharField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
-    file_3 = serializers.FileField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
-    caption_3 = serializers.CharField(allow_null=True, default=None, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    file_1 = serializers.FileField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    caption_1 = serializers.CharField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    file_2 = serializers.FileField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    caption_2 = serializers.CharField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    file_3 = serializers.FileField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
+    caption_3 = serializers.CharField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)
 
     class Meta:
         model = Answer
@@ -442,7 +465,7 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
 
         # 1- Update Answer with standard DRF GUI
         if user_obj:
-            validated_data.update({'uesr': user_obj})
+            validated_data.update({'user': user_obj})
             Answer.objects.filter(id=instance.id).update(**validated_data)
             'https://docs.djangoproject.com/en/4.0/ref/models/instances/#django.db.models.Model.refresh_from_db'
             instance.refresh_from_db()
