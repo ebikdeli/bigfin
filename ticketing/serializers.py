@@ -110,7 +110,7 @@ class TicketingSerializer(serializers.HyperlinkedModelSerializer):
     user_obj = serializers.PrimaryKeyRelatedField(queryset=get_user_model().objects.all(),
                                                   write_only=True,
                                                   allow_null=True,
-                                                  # default=None
+                                                  default=None
                                                   )
     # We can also write above command as HyperlinkedRelatedField like below line (but no recommended!):
     # user_obj = serializers.HyperlinkedRelatedField(queryset=get_user_model().objects.all(), write_only=True, view_name='accounts:user-detail', allow_null=True, default=None)
@@ -122,7 +122,7 @@ class TicketingSerializer(serializers.HyperlinkedModelSerializer):
     username = serializers.CharField(allow_null=True,
                                      write_only=True,
                                      help_text='Based on authentication method enter username, email or phone',
-                                     # default=None
+                                     default=None
                                      )
     # 'files_upload' field is useing 'nested serializer' as 'child' for the list field. When we send data to this
     # this field, we should put data in a 'list' and the data should be just like the data we send to
@@ -209,7 +209,7 @@ class TicketingSerializer(serializers.HyperlinkedModelSerializer):
         client side technologies
         """
         # First we should pop additional fields from validated data to prevent 'TypeError'
-        files_upload = validated_data.pip('files_upload', None)
+        files_upload = validated_data.pop('files_upload', None)
         user_obj = validated_data.pop('user_obj', None)
         username = validated_data.pop('username', None)
 
@@ -304,12 +304,12 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
                                                        many=False,
                                                        write_only=True,
                                                        allow_null=True,
-                                                       # default=None
+                                                       default=None
                                                        )
     ticket_id = serializers.UUIDField(write_only=True,
                                       allow_null=True,
                                       help_text='For client_server architecture method',
-                                      # default=None
+                                      default=None
                                       )
     # Following three fields used to show or get 'user' field on model
     user = UserSerializer(read_only=True, many=False)
@@ -317,12 +317,12 @@ class AnswerSerializer(serializers.HyperlinkedModelSerializer):
                                                   many=False,
                                                   write_only=True,
                                                   allow_null=True,
-                                                  #default=None
+                                                  default=None
                                                   )
     username = serializers.CharField(write_only=True,
                                      allow_null=True,
                                      help_text='Based on authentication method enter username, email or phone',
-                                     # default=None
+                                     default=None
                                      )
     # These fields used for DRF GUI to create files (FileUploadModel) (Because it's not support ListField) #
     file_1 = serializers.FileField(allow_null=True, required=False, help_text='Used for DRF GUI (optional)', write_only=True)

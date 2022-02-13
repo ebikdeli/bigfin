@@ -70,7 +70,7 @@ class AnswerViewset(ModelViewSet):
         # Per DRF documents it's so much faster to use 'get_queryset' method rather than 'queryset' attribute
         # queryset = Answer.objects.all()
         queryset = self.get_queryset()
-        print('query_params: ', self.request.query_params)
+        # print('query_params: ', self.request.query_params)
         if queryset.exists():
             serializer = AnswerSerializer(instance=queryset, many=True, context={'request': request})
             return Response(data=serializer.data, status=status.HTTP_200_OK)
