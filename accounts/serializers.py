@@ -3,6 +3,7 @@
 in serializers and filtersets we can't use 'AUTH_USER_MODEL' or stringized <app_name.Model_Name>' or we get
 this error:
 AttributeError: 'str' object has no attribute '_meta'
+https://docs.djangoproject.com/en/4.0/topics/auth/customizing/#referencing-the-user-model
 
 ** To have a independent app, we defined our Generic serailizer here too.
 We are following this document to define serializer for Generic serailizer:
@@ -21,12 +22,12 @@ For more information about extra context read below document:
 https://www.django-rest-framework.org/api-guide/serializers/#including-extra-context
 
 ** We used 'Serializer Inheritance' to be able to use 'nested relations' for 'Address' in 'User' Model.
+If we want to not include a field in child serializer from parent serializer, we just need to set its value to 'None'.
 for more information read below documents:
 https://www.django-rest-framework.org/api-guide/serializers/#serializer-inheritance
 https://www.django-rest-framework.org/api-guide/relations/#nested-relationships
 """
 # from django.conf import settings
-from email.policy import default
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -37,7 +38,10 @@ from .models import Address
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 # class UserSerializer(serializers.ModelSerializer):
     """Serializer for User model"""
-    url = serializers.HyperlinkedIdentityField(view_name='accounts:user-detail')
+    url = serializers.HyperlinkedIdentityField(view_name='accounts:user-detail',
+					                           # If change 'lookup_field' in the UserViewset:
+                                               lookup_field=get_user_model().USERNAME_FIELD
+                                              )
     """
     We can't use 'user_address' field here because this module can't identify 'AddressSerializer' yet:
     # user_address = AddressSerializer(many=True, read_only=True)
@@ -161,6 +165,9 @@ class UserNewSerializer(UserSerializer):
     # Below field used for test purpose! But be aware if we use default 'create' and 'update' methods,
     # This field cause 'TypeError' as it's a unexpected keyword argument.
     # some_field = serializers.CharField(default='Test field')
+
+    # To not include a field from parent in child (eg):
+    # name = None
 
     class Meta(UserSerializer.Meta):
         fields = [

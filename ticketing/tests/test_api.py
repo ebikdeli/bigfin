@@ -1,6 +1,22 @@
+"""
+If we have a file in our serializer, we must set 'format' argument in APIClient() 'post', 'put' and 'patch'
+methods to 'multipart'. This argument defaulted to 'json'
+for eg: self.client.post(path=..., data=..., format='multipart')
+
+In this module there is a test method with this address:
+    'TestFileUpload.test_file_upload_content_type_inner_serializer_valid_with_api'
+that we implemented bad structured but with good practical test!
+Documents used in this module:
+https://docs.djangoproject.com/en/4.0/ref/contrib/contenttypes/#methods-on-contenttype-instances
+https://www.django-rest-framework.org/api-guide/relations/#nested-relationships
+https://www.django-rest-framework.org/api-guide/fields/#listfield
+https://www.django-rest-framework.org/api-guide/fields/#file-upload-fields
+"""
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.contrib.contenttypes.models import ContentType
+from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework import status
 
@@ -64,7 +80,11 @@ class TestTicketing(TestCase):
 
         # Create ticket using 'user_obj' field:
         ticket_data_user_obj = {'user_obj': self.user.id, 'title': 'This is title', 'message': 'This is message'}
-        response_user_obj = self.client.post(reverse('ticketing:ticketing-list'), data=ticket_data_user_obj)
+        # IMPORTANT: 'format' argument in below line is defaulted to 'json'. But if we have a 'file' or 'image' or
+        # any other type of file, we must set format is 'multipart'.
+        response_user_obj = self.client.post(path=reverse('ticketing:ticketing-list'),
+                                             data=ticket_data_user_obj,
+                                             format='json')
         self.assertEqual(response_user_obj.status_code, status.HTTP_201_CREATED)
 
         # Create ticket using 'username' field:
@@ -72,7 +92,7 @@ class TestTicketing(TestCase):
         response_username = self.client.post(reverse('ticketing:ticketing-list'), data=ticket_data_username)
         self.assertEqual(response_username.status_code, status.HTTP_201_CREATED)
 
-        # Createing using both 'user_obj' and 'username' field:
+        # Creating using both 'user_obj' and 'username' field:
         ticket_data_both = {'username': self.user.username,
                             'user_obj': self.user.id,
                             'title': 'This is title',
@@ -147,6 +167,18 @@ class TestAnswer(TestCase):
         answer_data = {'user': self.user, 'ticketing': self.ticket, 'message': 'This is Anwer message'}
         self.answer = Answer.objects.create(**answer_data)
     
+    def test_answer_list_query_params_api(self):
+        """
+        We should test it in 'list' action of 'AnswerViewset' and see how 'request.query_params' works
+        and how we can use it to filter queryset
+        """
+        response = self.client.get(path=reverse('ticketing:answer-list')+'?name=ehsan&age=30')
+        # Or we should set 'data' argument of our action method. If we use 'data' argument,
+        # anything comes after '?' will be skipped:
+        # response = self.client.get(path=reverse('ticketing:answer-list'), data={'name': 'ehsan', 'age': 30})
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
     def test_answer_list_api(self):
         """Test if serializer works properly"""
         a_data_1 = {'user': self.user, 'ticketing': self.ticket, 'message': 'answer message 1'}
@@ -171,7 +203,7 @@ class TestAnswer(TestCase):
 
         self.assertEqual(response.json(), serializer.data)
     
-    def test_anwer_create_bad_api(self):
+    def test_answer_create_bad_api(self):
         """Test effect of bad request on the post method"""
         # 'post' method only accepts 'serializable data' not arbitrary objects such as 'User' and 'Ticket'
         bad_data = {'user_obj': self.user, 'ticketing_obj': self.ticket, 'message': 'Bad request'}
@@ -185,18 +217,22 @@ class TestAnswer(TestCase):
     
     def test_answer_create_api(self):
         """Test if new answer created properly"""
-        # We can get 'ticket' object for creating answer in 4 ways with 4 fields in the AnswerSerailizer:
+        # We can get 'ticket' object for creating answer in 4 ways with 4 fields in the AnswerSerializer:
         # 1- Using 'user_obj' and 'ticketing_obj'
         # 2- Using 'username' and 'ticketing_obj'
         # 3- Using 'user_obj' and 'ticket_id'
         # 4- Using 'username' and 'ticket_id'
-        # We can use any way we want but rememeber that for 'user_obj' and 'ticketing_obj' we need to get
+        # We can use any way we want but remember that for 'user_obj' and 'ticketing_obj' we need to get
         # them with 'lookup_field' or in this case the field is 'id':
         answer_data_1 = {'user_obj': self.user.id, 'ticket_id': self.ticket.ticket_id, 'message': 'This is message answer'}
         response_1 = self.client.post(reverse('ticketing:answer-list'), data=answer_data_1)
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
 
-        serializer = AnswerSerializer(instance=Answer.objects.last(), many=False, context={'request': self.request})
+        # serializer = AnswerSerializer(instance=Answer.objects.last(), many=False, context={'request': self.request})
+        # Below line to show how to send extra data to Serializer for future use:
+        serializer = AnswerSerializer(instance=Answer.objects.last(),
+                                      many=False,
+                                      context={'request': self.request, 'name': 'ehsan', 'age': 30})
 
         self.assertEqual(response_1.json(), serializer.data)
 
@@ -261,3 +297,85 @@ class TestAnswer(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertIsNone(Answer.objects.filter(id=self.answer.id).last())
+
+
+class TestFileUpload(TestCase):
+    def setUp(self) -> None:
+        # Create a super user
+        user_data = {'username': 'ehsan', 'password': '123456', 'name': 'essi'}
+        self.user = get_user_model().objects.create_superuser(**user_data)
+
+        # Create a clinet and login with the user
+        self.client = APIClient()
+        self.client.login(**user_data)
+
+        # Create a 'request' object
+        self.request = APIRequestFactory().get('admin:index')
+
+        # Create a Ticket
+        ticket_data = {'user': self.user, 'message': 'This is Ticket message', 'title': 'This is Ticket title'}
+        self.ticket = Ticketing.objects.create(**ticket_data)
+
+        # Create a Answer
+        answer_data = {'user': self.user, 'ticketing': self.ticket, 'message': 'This is Anwer message'}
+        self.answer = Answer.objects.create(**answer_data)
+
+        # Create two UploadFiles for Ticket and Answer
+        upload_file_data_ticket = {'content_object': self.ticket,
+                                   'file': SimpleUploadedFile(name='file_1.txt', content=b'file_1 contents'),
+                                   'caption': 'This is ticket file caption'}
+        upload_file_data_answer = {'content_object': self.answer,
+                                   'file': SimpleUploadedFile(name='file_2.jpg', content=b'file_2 contents'),
+                                   'caption': 'This is answer file caption'}
+        self.file_ticket = FileUpload.objects.create(**upload_file_data_ticket)
+        self.file_answer = FileUpload.objects.create(**upload_file_data_answer)
+    
+    def test_file_upload_content_type_inner_serializer_valid_with_api(self):
+        """
+        THIS TEST IS SPECIAL. It has many things to learn from. From how to send data via serializer without any instance
+        to how to create new object from ContentType model directly programmatically, From validating serializer and save
+        and creating new object to how sending data to 'List fields' in serializers and a nested serializer as child
+        serializer!.
+        """
+        # 'model' argument in ContentType queryset must be 'lowercase' even if the class is 'TitleCase':
+        cont_type = ContentType.objects.get(model='answer')
+        # print(cont_type.id)
+        cont_obj = cont_type.get_object_for_this_type(id=self.answer.id)
+        # print(cont_type.name)
+        # print(cont_obj.id)
+        """In the AnswerSerializer we defined a field name 'files_upload' that its value is 'FileUploadSerializer'.
+        This means if want to set value for 'files_upload' field, must be a value we would send to FileUploadSerializer
+        like what we do with 'file_data_1'"""
+        file_data_1 = {# 'content_object': self.answer.id,
+                       'content_type': cont_type.id,
+                       'object_id': cont_obj.id,
+                       'file': SimpleUploadedFile(name='file_3.jpg', content=b'file_3 contents'),
+                       'caption': 'This is answer file 3 caption'}
+        file_data_2 = {# 'content_object': self.answer.id,
+                       'content_type': cont_type.id,
+                       'object_id': cont_obj.id,
+                       'file': SimpleUploadedFile(name='file_4.jpg', content=b'file_4 contents'),
+                       'caption': 'This is answer file 4 caption'}
+
+        # print(SimpleUploadedFile(name='file_3.jpg', content=b'file_3 contents'))
+        #s = FileUploadSerializer(data=file_data_1)
+        # https://stackoverflow.com/questions/46805662/collections-ordereddict-object-has-no-attribute-pk-django-rest-framework
+        #s.is_valid()
+        #print(s)
+        #print(s.validated_data)
+
+        s1 = FileUploadSerializer(data=file_data_1, context={'request': self.request})
+        s1.is_valid()
+        # We can save the serializer and create new object (FileUpload)
+        s1.save()
+
+        s2 = FileUploadSerializer(data=file_data_2, context={'request': self.request})
+        s2.is_valid()
+        s2.save()
+
+        answer_data = {'user_obj': self.user.id, 'ticketing_obj': self.ticket.id, 'message': 'This is Answer message'}
+        answer_data.update({'files_upload': [file_data_1, file_data_2]})
+        kwargs = {'name': 'ehsan', 'age': 30}
+        serializer = AnswerSerializer(data=answer_data, context={'request': self.request})
+        serializer.is_valid()
+        serializer.save()

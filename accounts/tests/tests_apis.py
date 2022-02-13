@@ -19,6 +19,25 @@ from accounts.models import Address
 from accounts.serializers import UserNewSerializer, UserSerializer, AddressSerializer
 
 
+def get_lookup_field_value(user_obj):
+    """
+    This function used to be able to work with any arbitrary 'lookup_field' from UserViewSet. This is
+    help us to change 'lookup_field' without the need to change test codes!
+    https://stackoverflow.com/questions/21945067/how-to-list-all-fields-of-a-class-and-no-methods
+    https://stackoverflow.com/questions/3647805/get-models-fields-in-django
+    """
+    from accounts.views import UserViewSet
+    # 'lookup_field' is an attribute in UserViewSet class
+    lookup_field = UserViewSet.lookup_field
+    if lookup_field == 'pk':
+        data = {'pk': user_obj.id}
+    else:
+        # With '__dict__' dunder magic method we can get all the attributes and their value of any object in python!
+        user_field = user_obj.__dict__.get(lookup_field, None)
+        data = {lookup_field: user_field}
+    return data
+
+
 class TestUserSerializer(TestCase):
     def setUp(self) -> None:
         user_data = {'username': 'reza', 'password': '1234567'}
@@ -27,6 +46,8 @@ class TestUserSerializer(TestCase):
         self.user = get_user_model().objects.create_user(**user_data)
         self.admin = get_user_model().objects.create_superuser(**admin_data)
         self.client = APIClient()
+
+        self.kwargs = get_lookup_field_value(self.admin)
 
     def test_user_api_list(self):
         """Test if user list could be reached by API"""
@@ -52,7 +73,10 @@ class TestUserSerializer(TestCase):
         self.client.force_login(self.admin)
         # NOTE: 2 following commands are same but the seconde is more standard #
         # response = self.client.get(f'/accounts/user/{self.admin.id}/')
-        response = self.client.get(reverse('accounts:user-detail', kwargs={'pk': self.admin.id}))
+        # response = self.client.get(reverse('accounts:user-detail', kwargs={'pk': self.admin.id}))
+
+        # MORE GENERIC API FOR EVERY USERNAME_FIELD WE WANT:
+        response = self.client.get(reverse('accounts:user-detail', kwargs=self.kwargs))
 
         # Get the same user with serializer
         request = APIRequestFactory().get(reverse('admin:index'))   # It's not much matter where we get request!?
@@ -69,13 +93,18 @@ class TestUserSerializer(TestCase):
         # First test any unauthenticated user can reach to secured resources
         response = self.client.get(reverse('accounts:user-list'))
 
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        # If 'permission_classes' of the viewset set to 'IsAdmin' we use this:
 
+        # self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # If 'permission_classes' of the viewset set to 'IsAdmin' we use this:
+        # self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         # This time test if unauthorized user without enough access could access secured resources
-        self.client.force_login(self.user)
-        response = self.client.get(reverse('accounts:user-list'))
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # self.client.force_login(self.user)
+        # response = self.client.get(reverse('accounts:user-list'))
+        # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
     
     def test_create_user_api(self):
         """Test if we can create a user using api"""
@@ -109,7 +138,8 @@ class TestUserSerializer(TestCase):
 
         self.client.force_login(self.admin)
         new_data = {'is_staff': True, 'is_admin': True, 'is_staff': True, 'name': 'ARASH'}
-        response = self.client.patch(path=reverse('accounts:user-detail', kwargs={'pk': self.user.id}), data=new_data)
+        # response = self.client.patch(path=reverse('accounts:user-detail', kwargs={'pk': self.user.id}), data=new_data)
+        response = self.client.patch(path=reverse('accounts:user-detail', kwargs=get_lookup_field_value(self.user)), data=new_data)
 
         # https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.refresh_from_db
         self.user.refresh_from_db()
@@ -122,7 +152,8 @@ class TestUserSerializer(TestCase):
         """Test if user could get total updated by api. This means we should use 'put' method."""
         self.client.force_login(self.admin)
         new_data = {'username': 'reza', 'password': '1234567', 'name': 'reza', 'is_staff': True}
-        response = self.client.put(path=reverse('accounts:user-detail', kwargs={'pk': self.user.id}), data=new_data)
+        # response = self.client.put(path=reverse('accounts:user-detail', kwargs={'pk': self.user.id}), data=new_data)
+        response = self.client.put(path=reverse('accounts:user-detail', kwargs=get_lookup_field_value(self.user)), data=new_data)
 
         self.user.refresh_from_db()
 
@@ -140,7 +171,8 @@ class TestUserSerializer(TestCase):
         self.assertIsNotNone(user.last())
 
         # Then we use delete method to delete the user in database
-        response = self.client.delete(path=reverse('accounts:user-detail', kwargs={'pk': self.user.id}))
+        # response = self.client.delete(path=reverse('accounts:user-detail', kwargs={'pk': self.user.id}))
+        response = self.client.delete(path=reverse('accounts:user-detail', kwargs=get_lookup_field_value(user.last())))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Check if the user is not in the database
