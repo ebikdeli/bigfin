@@ -8,6 +8,10 @@ https://www.django-rest-framework.org/api-guide/testing/#apirequestfactory
 
 3- Because we use Serializer inheritance for User model serializer in the VIEWs, We must use UserNewSerializer
 for test. Actually we should use the child serializer for everything.
+
+4- If we have a file in our serializer, we must set 'format' argument in APIClient() 'post', 'put' and 'patch'
+methods to 'multipart'. This argument defaulted to 'json'
+for eg: self.client.post(path=..., data=..., format='multipart')
 """
 from django.test import TestCase
 from django.contrib.auth import get_user_model

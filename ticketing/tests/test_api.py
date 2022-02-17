@@ -426,6 +426,8 @@ class TestFileUpload(TestCase):
         upload_file_data = {'file': SimpleUploadedFile(name='file.exe', content=b'data'), 'content_type': cont.id, 'object_id': self.ticket.id, 'caption': 'This is caption'}
 
         response_1 = self.client.post(reverse('ticketing:fileupload-list'), data=upload_file_data)
+        # Or to get a better understanding we can use 'format' argument in the 'post' method:
+        # response_1 = self.client.post(reverse('ticketing:fileupload-list'), data=upload_file_data, format='multipart')
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
 
         serializer = FileUploadSerializer(instance=FileUpload.objects.last(), many=False, context={'request': self.request})
@@ -474,7 +476,9 @@ class TestFileUpload(TestCase):
                     'content_type': cont.id,
                     'object_id': self.file_ticket.id,
                     'caption': 'New message'}
-        response = self.client.put(reverse('ticketing:fileupload-detail', kwargs={'pk': self.file_ticket.id}), data=new_data)
+        response = self.client.put(path=reverse('ticketing:fileupload-detail', kwargs={'pk': self.file_ticket.id}),
+                                   data=new_data,
+                                   format='multipart')
 
         # Refresh fileupload object to show new data
         self.file_ticket.refresh_from_db()
