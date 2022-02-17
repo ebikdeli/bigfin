@@ -1,3 +1,8 @@
+"""
+Purpose of 'apps.py' in django applications:
+https://docs.djangoproject.com/en/4.0/ref/applications/#configuring-applications
+https://stackoverflow.com/questions/32795227/what-is-the-purpose-of-apps-py-in-django-1-9
+"""
 # from pathlib import Path
 import os
 from django.urls import reverse_lazy
@@ -25,11 +30,13 @@ INSTALLED_APPS = [
     'django_countries',
     'django_filters',
     # 'social_django',
+    'channels',
 
     'todo',
     
     'vitrin',
     'api',
+    'chat',
     'currency',
     'blog',
     'tutorial',
@@ -70,6 +77,18 @@ TEMPLATES = [
         },
     },
 ]
+# We are using django-channels and we are using 'ASGI' so it must be above 'WSGI_APPLICATION' attribute.
+ASGI_APPLICATION = 'bigfin.asgi.application'
+
+# Channel layer configs:
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 WSGI_APPLICATION = 'bigfin.wsgi.application'
 
