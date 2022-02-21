@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     # 'social_django',
     'channels',
 
-    'todo',
+    # 'todo',
     
     'vitrin',
     'api',

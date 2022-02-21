@@ -11,7 +11,7 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('ticket/', include('ticketing.urls')),
     path('chat/', include('chat.urls')),
-    path('todo/', include('todo.urls', namespace="todo")),
+    # path('todo/', include('todo.urls', namespace="todo")),
     path('', include('vitrin.urls')),
 ]
 
