@@ -2,8 +2,12 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+import redis
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    rds = redis.Redis(host="127.0.0.1", port=6379, db=0)
+    print(rds)
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
@@ -27,6 +31,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+        self.rds.set('a', message)
 
         # Send message to room group
         await self.channel_layer.group_send(
