@@ -22,7 +22,7 @@ from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 
-import chat.routing
+import apps.chat.routing
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bigfin.settings.dev')
@@ -31,7 +31,7 @@ application = ProtocolTypeRouter({
   "http": get_asgi_application(),
   "websocket": AuthMiddlewareStack(
         URLRouter(
-            chat.routing.websocket_urlpatterns
+            apps.chat.routing.websocket_urlpatterns
         )
     ),
 })

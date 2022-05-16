@@ -6,13 +6,13 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
-    path('dashboard/', include('dashboard.urls')),
-    path('api/', include('api.urls')),
-    path('ticket/', include('ticketing.urls')),
-    path('chat/', include('chat.urls')),
+    path('accounts/', include('apps.accounts.urls')),
+    path('dashboard/', include('apps.dashboard.urls')),
+    path('api/', include('apps.api.urls')),
+    path('ticket/', include('apps.ticketing.urls')),
+    path('chat/', include('apps.chat.urls')),
     # path('todo/', include('todo.urls', namespace="todo")),
-    path('', include('vitrin.urls')),
+    path('', include('apps.vitrin.urls')),
 ]
 
 if settings.DEBUG:

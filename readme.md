@@ -25,3 +25,5 @@ send 'request' object via Serializer context.
 
 We have used very simple and primitive chat server in this project in the 'chat' app so we are using
 'ASGI' as web gateway interface.
+
+All applications are bundles in a directory called 'apps' for better management.

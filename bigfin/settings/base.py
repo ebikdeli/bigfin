@@ -34,16 +34,17 @@ INSTALLED_APPS = [
 
     # 'todo',
     
-    'vitrin',
-    'api',
-    'chat',
-    'currency',
-    'blog',
-    'tutorial',
-    'accounts.apps.AccountsConfig',
-    'dashboard',
-    'wallet',
-    'ticketing.apps.TicketingConfig',
+    'apps.vitrin',
+    'apps.api',
+    'apps.chat',
+    'apps.currency',
+    'apps.blog',
+    'apps.tutorial',
+    'apps.accounts',
+    'apps.dashboard',
+    'apps.wallet',
+
+    'apps.ticketing',
 ]
 
 SITE_ID = 1
@@ -142,6 +143,8 @@ USE_L10N = True
 USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 STATIC_URL = '/static/'
 

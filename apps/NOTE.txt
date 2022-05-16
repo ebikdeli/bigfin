@@ -1,0 +1,7 @@
+After django==3.2 we should not set 'default_app_config' in any '<application>.__init__.py' module to be able to use signals.
+We just need to value 'name' attribute of any 'AppConfig' subclass in any '<application>.apps.py' module.
+For better information read below docs:
+# https://stackoverflow.com/questions/46177499/django-cant-import-module-check-that-module-appconfig-name-is-correct
+# https://docs.djangoproject.com/en/3.2/ref/applications/#django.apps.AppConfig.name
+
+# https://docs.djangoproject.com/en/4.0/releases/3.2/#what-s-new-in-django-3-2 #
