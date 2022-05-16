@@ -9,13 +9,17 @@
 *.pyc
 *.idea/**
 *.vscode/**
+**.VS*/**
+**.vs*/**
 .vs*/**
 .VS*/**
-*.db
-*.sqlite3
+**.db
+**.sqlite3
 **assets/**
 **media/**
-db.sqlite3
+**/db.sqlite3
+**/media
+**/static
 
 
 

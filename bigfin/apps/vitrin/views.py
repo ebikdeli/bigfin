@@ -39,8 +39,8 @@ def create_token(request):
 
 
 def page2(request):
-    return render(request, 'vitrin/templates/page2.html')
+    return render(request, 'apps/vitrin/templates/page2.html')
 
 
 def todo_view(request):
-    return render(request, 'vitrin/templates/todo_view.html')
+    return render(request, 'apps/vitrin/templates/todo_view.html')

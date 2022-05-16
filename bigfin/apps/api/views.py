@@ -16,7 +16,7 @@ class UserListView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         # This is only shows how 'authentication token' shown in DRF views
-        print(request.user)
-        print(request.auth)
+        # print(request.user)
+        # print(request.auth)
         serializer = UserSerializer(get_user_model().objects.all(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
