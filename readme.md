@@ -32,3 +32,5 @@ We are using subdomains for better structure and to do that we have used 'django
 
 We have also used 'django-silk' and 'django-debug-toolbar' libraries (from Jazzband projects) to analyze and debug
 our project. These libraries are very useful and best to understand our code perfomance and structure.
+
+We are using 'django-axes' to secure login process. It could integrate with DRF.

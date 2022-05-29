@@ -5,6 +5,9 @@ https://stackoverflow.com/questions/32795227/what-is-the-purpose-of-apps-py-in-d
 
 We have used 'django-hosts' package to add subdomains to django site:
 https://pypi.org/project/django-hosts/
+
+** 'django-silk' is very very database intensive and could made our website so slow and our database full in just a short time.
+Altought very useful analytical tool, we should only use it in development.
 """
 # from pathlib import Path
 import os
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     'simple_history',
     'silk',
+    'axes',
 
     'apps.vitrin',
     'apps.api',
@@ -57,8 +61,11 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django_hosts.middleware.HostsRequestMiddleware',
-
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",    This is wrong:
+    # based on this doc, https://django-hosts.readthedocs.io/en/latest/faq.html
+    # debug-toolbar must come after django-hosts request middleware and based on my experience it must just come before
+    # django-hosts repsonse middleware to not get 'djdt' not fount error.
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -71,6 +78,10 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware',
 
     'silk.middleware.SilkyMiddleware',
+
+    'axes.middleware.AxesMiddleware',
+
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 
     'django_hosts.middleware.HostsResponseMiddleware',
 ]
@@ -215,3 +226,20 @@ SILKY_DYNAMIC_PROFILING = [{
     'module': 'apps.ticketing.views',
     'function': 'TicketingViewset.list'
 }]
+
+SILKY_ANALYZE_QUERIES = True
+
+SILKY_MAX_RECORDED_REQUESTS = 10**3
+
+SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 10
+
+# Change default settings for 'axes' to work well:
+#https://django-axes.readthedocs.io/en/latest/2_installation.html
+
+AUTHENTICATION_BACKENDS = [
+    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    'axes.backends.AxesBackend',
+
+    # Django ModelBackend is the default authentication backend.
+    'django.contrib.auth.backends.ModelBackend',
+]

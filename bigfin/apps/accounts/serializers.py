@@ -26,6 +26,9 @@ If we want to not include a field in child serializer from parent serializer, we
 for more information read below documents:
 https://www.django-rest-framework.org/api-guide/serializers/#serializer-inheritance
 https://www.django-rest-framework.org/api-guide/relations/#nested-relationships
+
+** This is how we can integrate our django app with 'django-axes':
+https://django-axes.readthedocs.io/en/latest/6_integration.html
 """
 # from django.conf import settings
 from django.contrib.auth import get_user_model
