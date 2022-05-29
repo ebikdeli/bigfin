@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from simple_history import register
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import User
 from .models import Address
@@ -22,4 +24,6 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
-admin.site.register(Address)
+admin.site.register(Address, SimpleHistoryAdmin)
+
+register(User)

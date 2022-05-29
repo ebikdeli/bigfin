@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from simple_history.models import HistoricalRecords
 
 
 class Currency(models.Model):
@@ -10,6 +11,7 @@ class Currency(models.Model):
     time = models.DateTimeField(verbose_name=_('time'), auto_now=True, blank=True, null=True)
     founded = models.CharField(verbose_name=_('founded'), blank=True, max_length=4)
     is_crypto = models.BooleanField(verbose_name=_('is crypto'), default=False)
+    history = HistoricalRecords()
 
     class Meta:
         db_table = 'currency'

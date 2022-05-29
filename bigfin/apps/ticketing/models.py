@@ -11,6 +11,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
+from simple_history.models import HistoricalRecords
 
 import datetime
 import uuid
@@ -36,6 +37,7 @@ class FileUpload(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
+    history = HistoricalRecords()
 
     def __str__(self):
         return f'File({self.id})'
@@ -70,6 +72,7 @@ class Ticketing(models.Model):
     files = GenericRelation('FileUpload', related_query_name='ticketing')
     # file = models.FileField(verbose_name=_('attach file (if any)'), upload_to=file_upload_to, blank=True, null=True)
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
+    history = HistoricalRecords()
 
 
 class Answer(models.Model):
@@ -86,6 +89,7 @@ class Answer(models.Model):
     # file = models.FileField(verbose_name=_('attach file (if any)'), upload_to=file_upload_to, blank=True, null=True)
     files = GenericRelation(FileUpload, related_query_name='answer')
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return f'{self.id}_{self.message[:10]}'

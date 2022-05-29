@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from simple_history.models import HistoricalRecords
 
 import uuid
 
@@ -25,6 +26,7 @@ class Wallet(models.Model):
     is_active = models.BooleanField(verbose_name=_('is active'), default=True)
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
     updated = models.DateTimeField(verbose_name=_('updated'), auto_now=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return f'{self.user.username}_wallet'

@@ -35,9 +35,9 @@ INSTALLED_APPS = [
     # 'social_django',
     'channels',
     'django_hosts',
+    "debug_toolbar",
+    'simple_history',
 
-    # 'todo',
-    
     'apps.vitrin',
     'apps.api',
     'apps.chat',
@@ -56,6 +56,8 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django_hosts.middleware.HostsRequestMiddleware',
 
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -63,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'simple_history.middleware.HistoryRequestMiddleware',
 
     'django_hosts.middleware.HostsResponseMiddleware',
 ]
@@ -183,3 +187,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ]
 }
+
+# Django-debug-toolbar
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+    'localhost'
+]
