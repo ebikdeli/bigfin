@@ -13,7 +13,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
-    path('silk/', include('silk.urls', namespace='silk')),
+    # path('silk/', include('silk.urls', namespace='silk')),
+    path('grappelli/', include('grappelli.urls')),
 
     path('accounts/', include('apps.accounts.urls')),
     # path('dashboard/', include('apps.dashboard.urls')),   # It's a subdomain

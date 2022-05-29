@@ -20,6 +20,9 @@ PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
+    # https://django-grappelli.readthedocs.io/en/latest/quickstart.html#setup
+    'grappelli',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,7 +44,7 @@ INSTALLED_APPS = [
     'django_hosts',
     "debug_toolbar",
     'simple_history',
-    'silk',
+    # 'silk',
     'axes',
 
     'apps.vitrin',
@@ -77,7 +80,7 @@ MIDDLEWARE = [
 
     'simple_history.middleware.HistoryRequestMiddleware',
 
-    'silk.middleware.SilkyMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
 
     'axes.middleware.AxesMiddleware',
 
@@ -227,7 +230,7 @@ SILKY_DYNAMIC_PROFILING = [{
     'function': 'TicketingViewset.list'
 }]
 
-SILKY_ANALYZE_QUERIES = True
+# SILKY_ANALYZE_QUERIES = True  sqlite does not support this option
 
 SILKY_MAX_RECORDED_REQUESTS = 10**3
 
