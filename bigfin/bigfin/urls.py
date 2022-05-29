@@ -9,14 +9,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('__debug__/', include('debug_toolbar.urls')),
+    path('silk/', include('silk.urls', namespace='silk')),
+
     path('accounts/', include('apps.accounts.urls')),
     # path('dashboard/', include('apps.dashboard.urls')),   # It's a subdomain
     path('api/', include('apps.api.urls')),
     path('ticket/', include('apps.ticketing.urls')),
     path('chat/', include('apps.chat.urls')),
-    path('__debug__/', include('debug_toolbar.urls')),
     path('', include('apps.vitrin.urls')),
 ]
 

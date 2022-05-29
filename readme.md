@@ -29,3 +29,6 @@ We have used very simple and primitive chat server in this project in the 'chat'
 All applications are bundles in a directory called 'apps' for better management.
 
 We are using subdomains for better structure and to do that we have used 'django-hosts' module
+
+We have also used 'django-silk' and 'django-debug-toolbar' libraries (from Jazzband projects) to analyze and debug
+our project. These libraries are very useful and best to understand our code perfomance and structure.

@@ -29,14 +29,16 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
-    'taggit',
     'django_countries',
     'django_filters',
     # 'social_django',
     'channels',
+    # These are some of 'jazzband' useful projects libraries. These tools are very helpful
+    'taggit',
     'django_hosts',
     "debug_toolbar",
     'simple_history',
+    'silk',
 
     'apps.vitrin',
     'apps.api',
@@ -68,15 +70,21 @@ MIDDLEWARE = [
 
     'simple_history.middleware.HistoryRequestMiddleware',
 
+    'silk.middleware.SilkyMiddleware',
+
     'django_hosts.middleware.HostsResponseMiddleware',
 ]
 
 ROOT_URLCONF = 'bigfin.urls'
 
-# Root hosts.py for subdomains
+# Django-hosts settings. Root hosts.py for subdomains
+# https://jazzband.co/projects/django-hosts
+
 ROOT_HOSTCONF = 'bigfin.hosts'
 
 DEFAULT_HOST = 'www'
+
+# Template settings
 
 TEMPLATES = [
     {
@@ -189,8 +197,21 @@ REST_FRAMEWORK = {
 }
 
 # Django-debug-toolbar
+# https://jazzband.co/projects/django-debug-toolbar
 
 INTERNAL_IPS = [
     "127.0.0.1",
     'localhost'
 ]
+
+# django Silk optional settings:
+# https://pypi.org/project/django-silk/
+
+SILKY_PYTHON_PROFILER = True
+
+SILKY_PYTHON_PROFILER_BINARY = True
+
+SILKY_DYNAMIC_PROFILING = [{
+    'module': 'apps.ticketing.views',
+    'function': 'TicketingViewset.list'
+}]

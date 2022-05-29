@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from rest_framework.authtoken.models import Token
+from silk.profiling.profiler import silk_profile
 
 import redis
 from redis import exceptions
 
 
+@silk_profile(name='View Blog Post')
 def index(request):
     """Index page of view"""
     return JsonResponse(data='Hello my beautiful world', safe=False)
