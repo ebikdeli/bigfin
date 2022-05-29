@@ -27,3 +27,5 @@ We have used very simple and primitive chat server in this project in the 'chat'
 'ASGI' as web gateway interface.
 
 All applications are bundles in a directory called 'apps' for better management.
+
+We are using subdomains for better structure and to do that we have used 'django-hosts' module

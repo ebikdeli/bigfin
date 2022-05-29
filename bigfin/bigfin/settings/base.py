@@ -2,6 +2,9 @@
 Purpose of 'apps.py' in django applications:
 https://docs.djangoproject.com/en/4.0/ref/applications/#configuring-applications
 https://stackoverflow.com/questions/32795227/what-is-the-purpose-of-apps-py-in-django-1-9
+
+We have used 'django-hosts' package to add subdomains to django site:
+https://pypi.org/project/django-hosts/
 """
 # from pathlib import Path
 import os
@@ -31,6 +34,7 @@ INSTALLED_APPS = [
     'django_filters',
     # 'social_django',
     'channels',
+    'django_hosts',
 
     # 'todo',
     
@@ -50,6 +54,8 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
+    'django_hosts.middleware.HostsRequestMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,9 +63,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'django_hosts.middleware.HostsResponseMiddleware',
 ]
 
 ROOT_URLCONF = 'bigfin.urls'
+
+# Root hosts.py for subdomains
+ROOT_HOSTCONF = 'bigfin.hosts'
+
+DEFAULT_HOST = 'www'
 
 TEMPLATES = [
     {
