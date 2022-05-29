@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'simple_history',
     # 'silk',
     'axes',
+    'analytical',
 
     'apps.vitrin',
     'apps.api',
