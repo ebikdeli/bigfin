@@ -13,8 +13,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include('debug_toolbar.urls')),
+    path("__reload__/", include("django_browser_reload.urls")),     # 'django-browser-reload' module
     # path('silk/', include('silk.urls', namespace='silk')),
-    path('grappelli/', include('grappelli.urls')),
+    # path('grappelli/', include('grappelli.urls')),
+    path('watchman/', include('watchman.urls')),    # Enable 'django-watchman'
 
     path('accounts/', include('apps.accounts.urls')),
     # path('dashboard/', include('apps.dashboard.urls')),   # It's a subdomain

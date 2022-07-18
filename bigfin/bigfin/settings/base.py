@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
     # https://django-grappelli.readthedocs.io/en/latest/quickstart.html#setup
-    'grappelli',
+    # 'grappelli',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     # 'silk',
     'axes',
     'analytical',
+
+    "django_browser_reload",    # Enable 'django-browser-reload' module
+    'watchman',     # Enable 'django-watchman'
 
     'apps.vitrin',
     'apps.api',
@@ -78,6 +81,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "django_browser_reload.middleware.BrowserReloadMiddleware",     # 'django-browser-reload' module
 
     'simple_history.middleware.HistoryRequestMiddleware',
 
